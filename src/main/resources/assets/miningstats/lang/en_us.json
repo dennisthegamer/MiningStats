@@ -1,0 +1,23 @@
+{
+  "key.miningstats.compact": "Toggle Compact Mode",
+  "key.miningstats.reset": "Reset Session",
+  "category.miningstats": "MiningStats",
+
+  "config.miningstats.title": "MiningStats Configuration",
+  "config.miningstats.category.hud": "HUD Settings",
+  "config.miningstats.category.session": "Session Settings",
+  "config.miningstats.category.tracking": "Tracking Settings",
+
+  "config.miningstats.hud_position": "HUD Position",
+  "config.miningstats.hud_position.tooltip": "Position of the HUD overlay on screen",
+  "config.miningstats.hud_visible_always": "Always Visible",
+  "config.miningstats.hud_visible_always.tooltip": "Show HUD even when not holding a pickaxe",
+  "config.miningstats.hud_opacity": "HUD Opacity",
+  "config.miningstats.hud_opacity.tooltip": "Background opacity of the HUD (0.0 - 1.0)",
+  "config.miningstats.show_session_summary": "Session Summary",
+  "config.miningstats.show_session_summary.tooltip": "Show session summary in chat when leaving a world",
+  "config.miningstats.merge_deepslate": "Merge Deepslate",
+  "config.miningstats.merge_deepslate.tooltip": "Count deepslate and normal ore variants together",
+  "config.miningstats.tracked_ores": "Custom Tracked Ores",
+  "config.miningstats.tracked_ores.tooltip": "Additional block IDs to track (e.g. create:zinc_ore)"
+}

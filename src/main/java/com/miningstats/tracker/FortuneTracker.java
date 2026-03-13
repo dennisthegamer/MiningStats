@@ -1,0 +1,67 @@
+package com.miningstats.tracker;
+
+import com.miningstats.data.OreType;
+import com.miningstats.data.SessionData;
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.entity.ItemEntity;
+import net.minecraft.item.Item;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Box;
+
+import java.util.List;
+
+public class FortuneTracker {
+
+    private static BlockPos pendingPos = null;
+    private static OreType pendingType = null;
+    private static int pendingFortuneLevel = 0;
+    private static int ticksWaiting = 0;
+
+    public static void scheduleDropCheck(BlockPos pos, OreType type, int fortuneLevel) {
+        pendingPos = pos;
+        pendingType = type;
+        pendingFortuneLevel = fortuneLevel;
+        ticksWaiting = 0;
+    }
+
+    public static void tick() {
+        if (pendingPos == null) return;
+
+        ticksWaiting++;
+
+        // Wait 2 ticks for items to spawn, then count them
+        if (ticksWaiting >= 2) {
+            countDrops();
+            pendingPos = null;
+            pendingType = null;
+            pendingFortuneLevel = 0;
+            ticksWaiting = 0;
+        }
+    }
+
+    private static void countDrops() {
+        MinecraftClient client = MinecraftClient.getInstance();
+        if (client.world == null || pendingType == null || pendingPos == null) return;
+
+        Item expectedItem = pendingType.getDropItem();
+        if (expectedItem == null) return;
+
+        // Search for item entities near the broken block
+        Box searchBox = new Box(pendingPos).expand(2.0);
+        List<ItemEntity> items = client.world.getEntitiesByClass(
+                ItemEntity.class, searchBox, entity -> entity.getStack().isOf(expectedItem)
+        );
+
+        int actualDrops = 0;
+        for (ItemEntity itemEntity : items) {
+            actualDrops += itemEntity.getStack().getCount();
+        }
+
+        int baseDrop = pendingType.getBaseDrop();
+        int bonus = Math.max(0, actualDrops - baseDrop);
+
+        if (bonus > 0) {
+            SessionData.getInstance().addFortuneBonus(pendingType, bonus);
+        }
+    }
+}

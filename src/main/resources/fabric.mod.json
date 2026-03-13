@@ -1,0 +1,34 @@
+{
+	"schemaVersion": 1,
+	"id": "miningstats",
+	"version": "${version}",
+	"name": "MiningStats",
+	"description": "Tracks mined ores, calculates Fortune bonus, and displays live stats in a configurable HUD overlay.",
+	"authors": [
+		"DennisTheGamer"
+	],
+	"contact": {},
+	"license": "MIT",
+	"icon": "assets/miningstats/icon.png",
+	"environment": "client",
+	"entrypoints": {
+		"client": [
+			"com.miningstats.MiningStatsClient"
+		],
+		"modmenu": [
+			"com.miningstats.config.ModMenuIntegration"
+		]
+	},
+	"mixins": [
+		"miningstats.mixins.json"
+	],
+	"depends": {
+		"fabricloader": ">=0.18.3",
+		"minecraft": ">=1.21 <=1.21.11",
+		"java": ">=21",
+		"fabric-api": "*"
+	},
+	"suggests": {
+		"cloth-config": ">=15.0.0"
+	}
+}
