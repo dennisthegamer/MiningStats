@@ -46,10 +46,11 @@ public class FortuneTracker {
         Item expectedItem = pendingType.getDropItem();
         if (expectedItem == null) return;
 
-        // Search for item entities near the broken block
+        // Search for item entities near the broken block (only freshly spawned ones)
         Box searchBox = new Box(pendingPos).expand(2.0);
         List<ItemEntity> items = client.world.getEntitiesByClass(
-                ItemEntity.class, searchBox, entity -> entity.getStack().isOf(expectedItem)
+                ItemEntity.class, searchBox,
+                entity -> entity.getStack().isOf(expectedItem) && entity.getItemAge() <= 5
         );
 
         int actualDrops = 0;
