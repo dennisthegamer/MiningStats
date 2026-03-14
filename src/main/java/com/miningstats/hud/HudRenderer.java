@@ -91,9 +91,9 @@ public class HudRenderer {
             if (session.getOreCount(type) > 0) oreLines++;
         }
 
-        // Title + ore lines + fortune
-        int contentLines = 1 + oreLines + 1;
-        int hudWidth = 180;
+        // Title + ore lines (no more fortune total row)
+        int contentLines = 1 + oreLines;
+        int hudWidth = 220;
         int hudHeight = padding * 2 + contentLines * lineHeight;
 
         int x = HudLayout.getX(client.getWindow().getScaledWidth(), hudWidth);
@@ -145,17 +145,21 @@ public class HudRenderer {
             // Draw ore name (left-aligned after icon)
             context.drawText(textRenderer, type.getDisplayName(), x + padding + textOffsetX, currentY, 0xFFFFFFFF, true);
 
-            // Draw count (right-aligned)
+            // Draw fortune bonus (right-aligned at edge) if > 0
+            int fortuneBonus = session.getFortuneBonus(type);
+            if (fortuneBonus > 0) {
+                String bonusText = "(+" + fortuneBonus + ")";
+                int bonusWidth = textRenderer.getWidth(bonusText);
+                context.drawText(textRenderer, bonusText, rightEdge - bonusWidth, currentY, 0xFFFFD700, true);
+            }
+
+            // Draw count (right-aligned before bonus column)
             String countText = String.valueOf(count);
             int countWidth = textRenderer.getWidth(countText);
-            context.drawText(textRenderer, countText, rightEdge - countWidth, currentY, 0xFFFFFFFF, true);
+            int countX = rightEdge - 50 - countWidth; // 50px reserved for bonus column
+            context.drawText(textRenderer, countText, countX, currentY, 0xFFFFFFFF, true);
 
             currentY += lineHeight;
         }
-
-        // Fortune Bonus with shamrock symbol
-        String fortuneText = I18n.translate("miningstats.hud.fortune", session.getTotalFortuneBonus());
-        int fortuneX = x + (hudWidth - textRenderer.getWidth(fortuneText)) / 2;
-        context.drawText(textRenderer, fortuneText, fortuneX, currentY, 0xFFFFD700, true);
     }
 }
