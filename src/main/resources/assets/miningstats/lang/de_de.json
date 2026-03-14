@@ -2,7 +2,7 @@
   "key.miningstats.compact": "Kompaktmodus umschalten",
   "key.miningstats.reset": "Sitzung zurücksetzen",
   "key.miningstats.toggle_session": "Sitzung starten/pausieren",
-  "category.miningstats": "MiningStats",
+  "key.category.miningstats.miningstats": "MiningStats",
 
   "config.miningstats.title": "MiningStats Konfiguration",
   "config.miningstats.category.hud": "HUD Einstellungen",

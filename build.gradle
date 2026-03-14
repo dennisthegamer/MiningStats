@@ -42,10 +42,8 @@ dependencies {
 	}
 
 	// ModMenu for dev environment only
-	if (project.minecraft_version == "1.21.8") {
-		modCompileOnly "maven.modrinth:modmenu:15.0.0"
-		modLocalRuntime "maven.modrinth:modmenu:15.0.0"
-	}
+	modCompileOnly "maven.modrinth:modmenu:17.0.0-alpha.1"
+	modLocalRuntime "maven.modrinth:modmenu:17.0.0-alpha.1"
 }
 
 processResources {

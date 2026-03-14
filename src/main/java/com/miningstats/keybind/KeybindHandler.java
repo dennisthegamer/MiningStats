@@ -11,9 +11,13 @@ import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.InputUtil;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
+import net.minecraft.util.Identifier;
 import org.lwjgl.glfw.GLFW;
 
 public class KeybindHandler {
+
+    private static final KeyBinding.Category CATEGORY =
+            KeyBinding.Category.create(Identifier.of("miningstats", "miningstats"));
 
     private static KeyBinding compactKey;
     private static KeyBinding resetKey;
@@ -24,21 +28,21 @@ public class KeybindHandler {
                 "key.miningstats.compact",
                 InputUtil.Type.KEYSYM,
                 GLFW.GLFW_KEY_H,
-                "category.miningstats"
+                CATEGORY
         ));
 
         resetKey = KeyBindingHelper.registerKeyBinding(new KeyBinding(
                 "key.miningstats.reset",
                 InputUtil.Type.KEYSYM,
                 GLFW.GLFW_KEY_K,
-                "category.miningstats"
+                CATEGORY
         ));
 
         toggleSessionKey = KeyBindingHelper.registerKeyBinding(new KeyBinding(
                 "key.miningstats.toggle_session",
                 InputUtil.Type.KEYSYM,
                 GLFW.GLFW_KEY_J,
-                "category.miningstats"
+                CATEGORY
         ));
     }
 
