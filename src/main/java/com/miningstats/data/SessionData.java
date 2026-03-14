@@ -10,6 +10,9 @@ public class SessionData {
     private final Map<OreType, Integer> oreCounts = new EnumMap<>(OreType.class);
     private final Map<OreType, Integer> fortuneBonus = new EnumMap<>(OreType.class);
     private long sessionStartTime;
+    private boolean active = false;
+    private long pausedDurationMillis = 0;
+    private long pauseStartTime = 0;
 
     private SessionData() {
         reset();
@@ -23,6 +26,34 @@ public class SessionData {
         oreCounts.clear();
         fortuneBonus.clear();
         sessionStartTime = System.currentTimeMillis();
+        active = false;
+        pausedDurationMillis = 0;
+        pauseStartTime = 0;
+    }
+
+    public void start() {
+        if (!active) {
+            if (sessionStartTime == 0 || getTotalOres() == 0) {
+                sessionStartTime = System.currentTimeMillis();
+                pausedDurationMillis = 0;
+            }
+            if (pauseStartTime > 0) {
+                pausedDurationMillis += System.currentTimeMillis() - pauseStartTime;
+                pauseStartTime = 0;
+            }
+            active = true;
+        }
+    }
+
+    public void pause() {
+        if (active) {
+            active = false;
+            pauseStartTime = System.currentTimeMillis();
+        }
+    }
+
+    public boolean isActive() {
+        return active;
     }
 
     public void incrementOreCount(OreType type) {
@@ -56,7 +87,12 @@ public class SessionData {
     }
 
     public long getSessionDurationMillis() {
-        return System.currentTimeMillis() - sessionStartTime;
+        long elapsed = System.currentTimeMillis() - sessionStartTime;
+        long paused = pausedDurationMillis;
+        if (!active && pauseStartTime > 0) {
+            paused += System.currentTimeMillis() - pauseStartTime;
+        }
+        return elapsed - paused;
     }
 
     public String getFormattedDuration() {

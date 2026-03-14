@@ -10,6 +10,7 @@ import com.miningstats.tracker.FortuneTracker;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
+import net.minecraft.text.Text;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,6 +20,7 @@ public class MiningStatsClient implements ClientModInitializer {
 	public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
 
 	private boolean wasInWorld = false;
+	private boolean hintShown = false;
 
 	@Override
 	public void onInitializeClient() {
@@ -51,14 +53,24 @@ public class MiningStatsClient implements ClientModInitializer {
 			boolean inWorld = client.world != null && client.player != null;
 
 			if (inWorld && !wasInWorld) {
-				// Just joined a world — start session
+				// Just joined a world — reset data but don't start session
 				SessionData.getInstance().reset();
-				LOGGER.info("Session started");
+				hintShown = false;
+				LOGGER.info("World joined — session ready to start");
+			} else if (inWorld && !hintShown && client.player != null) {
+				// Show hint once after joining
+				client.player.sendMessage(
+						Text.translatable("miningstats.hint")
+								.styled(style -> style.withColor(0xFFD700)),
+						false
+				);
+				hintShown = true;
 			} else if (!inWorld && wasInWorld) {
-				// Just left a world — show summary
-				if (client.player != null) {
+				// Just left a world — show summary if session was active
+				if (client.player != null && SessionData.getInstance().getTotalOres() > 0) {
 					KeybindHandler.sendSessionSummary(client);
 				}
+				SessionData.getInstance().reset();
 				LOGGER.info("Session ended");
 			}
 

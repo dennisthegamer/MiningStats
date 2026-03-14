@@ -7,6 +7,7 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.render.RenderTickCounter;
+import net.minecraft.client.resource.language.I18n;
 import net.minecraft.item.ItemStack;
 import net.minecraft.registry.tag.ItemTags;
 
@@ -51,7 +52,7 @@ public class HudRenderer {
         SessionData session = SessionData.getInstance();
         ModConfig config = ModConfig.getInstance();
 
-        String text = "\u26CF " + session.getTotalOres() + " Ores | Fortune: +" + session.getTotalFortuneBonus();
+        String text = I18n.translate("miningstats.hud.compact", session.getTotalOres(), session.getTotalFortuneBonus());
         int textWidth = textRenderer.getWidth(text);
         int padding = HudLayout.getPadding();
         int hudWidth = textWidth + padding * 2;
@@ -113,17 +114,20 @@ public class HudRenderer {
 
         // Reset message overlay
         if (HudEffects.isShowingResetMessage()) {
-            String resetText = "Session zur\u00fcckgesetzt!";
+            String resetText = I18n.translate("miningstats.hud.reset");
             int resetX = x + (hudWidth - textRenderer.getWidth(resetText)) / 2;
             int resetY = y + (hudHeight - textRenderer.fontHeight) / 2;
             context.drawText(textRenderer, resetText, resetX, resetY, 0xFFFFFF00, true);
             return;
         }
 
-        // Title (centered)
-        String title = "Live Stats:";
+        // Title (centered) with session status
+        String title = session.isActive()
+                ? I18n.translate("miningstats.hud.title.active")
+                : I18n.translate("miningstats.hud.title.paused");
+        int titleColor = session.isActive() ? 0xFFFFFFFF : 0xFFFFAA00;
         int titleX = x + (hudWidth - textRenderer.getWidth(title)) / 2;
-        context.drawText(textRenderer, title, titleX, currentY, 0xFFFFFFFF, true);
+        context.drawText(textRenderer, title, titleX, currentY, titleColor, true);
         currentY += lineHeight;
 
         // Ore lines with icons and right-aligned counts
@@ -150,7 +154,7 @@ public class HudRenderer {
         }
 
         // Fortune Bonus with shamrock symbol
-        String fortuneText = "\u2618 Fortune Bonus: +" + session.getTotalFortuneBonus() + " Items";
+        String fortuneText = I18n.translate("miningstats.hud.fortune", session.getTotalFortuneBonus());
         int fortuneX = x + (hudWidth - textRenderer.getWidth(fortuneText)) / 2;
         context.drawText(textRenderer, fortuneText, fortuneX, currentY, 0xFFFFD700, true);
     }

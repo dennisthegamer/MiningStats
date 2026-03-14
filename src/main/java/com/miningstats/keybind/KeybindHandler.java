@@ -17,6 +17,7 @@ public class KeybindHandler {
 
     private static KeyBinding compactKey;
     private static KeyBinding resetKey;
+    private static KeyBinding toggleSessionKey;
 
     public static void register() {
         compactKey = KeyBindingHelper.registerKeyBinding(new KeyBinding(
@@ -32,6 +33,13 @@ public class KeybindHandler {
                 GLFW.GLFW_KEY_K,
                 "category.miningstats"
         ));
+
+        toggleSessionKey = KeyBindingHelper.registerKeyBinding(new KeyBinding(
+                "key.miningstats.toggle_session",
+                InputUtil.Type.KEYSYM,
+                GLFW.GLFW_KEY_J,
+                "category.miningstats"
+        ));
     }
 
     public static void tick(MinecraftClient client) {
@@ -42,12 +50,31 @@ public class KeybindHandler {
         }
 
         while (resetKey.wasPressed()) {
+            SessionData session = SessionData.getInstance();
             sendSessionSummary(client);
-            SessionData.getInstance().reset();
+            session.reset();
             HudEffects.triggerResetMessage();
 
-            // Play sound
             client.player.playSound(SoundEvents.ENTITY_EXPERIENCE_ORB_PICKUP, 1.0f, 1.0f);
+        }
+
+        while (toggleSessionKey.wasPressed()) {
+            SessionData session = SessionData.getInstance();
+            if (session.isActive()) {
+                session.pause();
+                client.player.sendMessage(
+                        Text.translatable("miningstats.session.paused")
+                                .styled(style -> style.withColor(0xFFAA00)),
+                        true
+                );
+            } else {
+                session.start();
+                client.player.sendMessage(
+                        Text.translatable("miningstats.session.started")
+                                .styled(style -> style.withColor(0x55FF55)),
+                        true
+                );
+            }
         }
     }
 
@@ -62,21 +89,21 @@ public class KeybindHandler {
         // Header
         client.player.sendMessage(Text.literal(""), false);
         client.player.sendMessage(
-                Text.literal("\u26CF MiningStats \u2014 Session Zusammenfassung")
+                Text.translatable("miningstats.session.summary_header")
                         .styled(style -> style.withColor(0xFFD700).withBold(true)),
                 false
         );
 
         // Duration
         client.player.sendMessage(
-                Text.literal("Dauer: " + session.getFormattedDuration())
+                Text.translatable("miningstats.session.duration", session.getFormattedDuration())
                         .styled(style -> style.withColor(0xFFFFFF)),
                 false
         );
 
         // Total ores
         client.player.sendMessage(
-                Text.literal("Abgebaute Erze: " + session.getTotalOres() + " gesamt")
+                Text.translatable("miningstats.session.ores_mined", session.getTotalOres())
                         .styled(style -> style.withColor(0xFFFFFF)),
                 false
         );
@@ -101,7 +128,7 @@ public class KeybindHandler {
 
         // Fortune bonus
         client.player.sendMessage(
-                Text.literal("Fortune Bonus: +" + session.getTotalFortuneBonus() + " Items")
+                Text.translatable("miningstats.session.fortune_bonus", session.getTotalFortuneBonus())
                         .styled(style -> style.withColor(0xFFD700)),
                 false
         );

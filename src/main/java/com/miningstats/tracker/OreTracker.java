@@ -23,6 +23,9 @@ public class OreTracker {
         ClientPlayerEntity player = client.player;
         if (player == null) return;
 
+        // Only track when session is active
+        if (!SessionData.getInstance().isActive()) return;
+
         // Check if player is holding a pickaxe
         ItemStack mainHand = player.getMainHandStack();
         if (!isPickaxe(mainHand)) return;
@@ -88,7 +91,7 @@ public class OreTracker {
             MinecraftClient client = MinecraftClient.getInstance();
             if (client.player != null) {
                 client.player.sendMessage(
-                        net.minecraft.text.Text.literal("\u26CF Meilenstein: " + count + " " + type.getDisplayName() + " abgebaut!")
+                        net.minecraft.text.Text.translatable("miningstats.milestone", count, type.getDisplayName())
                                 .styled(style -> style.withColor(0xFFD700)),
                         false
                 );
