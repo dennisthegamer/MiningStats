@@ -1,9 +1,9 @@
 package com.miningstats.data;
 
-import net.minecraft.block.Block;
-import net.minecraft.block.Blocks;
-import net.minecraft.registry.Registries;
-import net.minecraft.util.Identifier;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.resources.Identifier;
 
 import java.util.HashMap;
 import java.util.List;
@@ -65,7 +65,7 @@ public class OreRegistry {
         if (type != null) {
             return Optional.of(type);
         }
-        Identifier id = Registries.BLOCK.getId(block);
+        Identifier id = BuiltInRegistries.BLOCK.getKey(block);
         type = CUSTOM_ORES.get(id);
         return Optional.ofNullable(type);
     }

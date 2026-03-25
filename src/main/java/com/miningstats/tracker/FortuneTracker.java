@@ -2,11 +2,12 @@ package com.miningstats.tracker;
 
 import com.miningstats.data.OreType;
 import com.miningstats.data.SessionData;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.entity.ItemEntity;
-import net.minecraft.item.Item;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Box;
+import net.minecraft.client.Minecraft;
+import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.item.Item;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.phys.AABB;
 
 import java.util.List;
 
@@ -40,22 +41,22 @@ public class FortuneTracker {
     }
 
     private static void countDrops() {
-        MinecraftClient client = MinecraftClient.getInstance();
-        if (client.world == null || pendingType == null || pendingPos == null) return;
+        Minecraft client = Minecraft.getInstance();
+        if (client.level == null || pendingType == null || pendingPos == null) return;
 
         Item expectedItem = pendingType.getDropItem();
         if (expectedItem == null) return;
 
         // Search for item entities near the broken block (only freshly spawned ones)
-        Box searchBox = new Box(pendingPos).expand(2.0);
-        List<ItemEntity> items = client.world.getEntitiesByClass(
-                ItemEntity.class, searchBox,
-                entity -> entity.getStack().isOf(expectedItem) && entity.getItemAge() <= 5
+        AABB searchBox = new AABB(pendingPos).inflate(2.0);
+        List<ItemEntity> items = client.level.getEntities(
+                EntityType.ITEM, searchBox,
+                entity -> entity.getItem().is(holder -> holder.is(expectedItem.builtInRegistryHolder())) && entity.getAge() <= 5
         );
 
         int actualDrops = 0;
         for (ItemEntity itemEntity : items) {
-            actualDrops += itemEntity.getStack().getCount();
+            actualDrops += itemEntity.getItem().getCount();
         }
 
         int baseDrop = pendingType.getBaseDrop();

@@ -5,29 +5,31 @@ import com.miningstats.data.OreRegistry;
 import com.miningstats.data.OreType;
 import com.miningstats.data.SessionData;
 import com.miningstats.hud.HudEffects;
-import net.minecraft.block.BlockState;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.network.ClientPlayerEntity;
-import net.minecraft.enchantment.EnchantmentHelper;
-import net.minecraft.enchantment.Enchantments;
-import net.minecraft.item.ItemStack;
-import net.minecraft.registry.RegistryKeys;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.world.item.enchantment.EnchantmentHelper;
+import net.minecraft.world.item.enchantment.Enchantments;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.Component;
+import net.minecraft.tags.ItemTags;
 
 import java.util.Optional;
 
 public class OreTracker {
 
     public static void onBlockBroken(BlockPos pos, BlockState state) {
-        MinecraftClient client = MinecraftClient.getInstance();
-        ClientPlayerEntity player = client.player;
+        Minecraft client = Minecraft.getInstance();
+        LocalPlayer player = client.player;
         if (player == null) return;
 
         // Only track when session is active
         if (!SessionData.getInstance().isActive()) return;
 
         // Check if player is holding a pickaxe
-        ItemStack mainHand = player.getMainHandStack();
+        ItemStack mainHand = player.getMainHandItem();
         if (!isPickaxe(mainHand)) return;
 
         // Check if the block is a tracked ore
@@ -62,38 +64,30 @@ public class OreTracker {
 
     private static boolean isPickaxe(ItemStack stack) {
         if (stack.isEmpty()) return false;
-        // Check using the item's mining tags - pickaxes are in the minecraft:pickaxes tag
-        return stack.isIn(net.minecraft.registry.tag.ItemTags.PICKAXES);
+        return stack.is(holder -> holder.is(ItemTags.PICKAXES));
     }
 
     private static boolean hasSilkTouch(ItemStack stack) {
-        return EnchantmentHelper.getLevel(
-                MinecraftClient.getInstance().world.getRegistryManager()
-                        .getOrThrow(RegistryKeys.ENCHANTMENT)
-                        .getOrThrow(Enchantments.SILK_TOUCH),
-                stack
-        ) > 0;
+        var enchantmentRegistry = Minecraft.getInstance().level.registryAccess().lookupOrThrow(Registries.ENCHANTMENT);
+        var holder = enchantmentRegistry.getOrThrow(Enchantments.SILK_TOUCH);
+        return EnchantmentHelper.getItemEnchantmentLevel(holder, stack) > 0;
     }
 
     private static int getFortuneLevel(ItemStack stack) {
-        return EnchantmentHelper.getLevel(
-                MinecraftClient.getInstance().world.getRegistryManager()
-                        .getOrThrow(RegistryKeys.ENCHANTMENT)
-                        .getOrThrow(Enchantments.FORTUNE),
-                stack
-        );
+        var enchantmentRegistry = Minecraft.getInstance().level.registryAccess().lookupOrThrow(Registries.ENCHANTMENT);
+        var holder = enchantmentRegistry.getOrThrow(Enchantments.FORTUNE);
+        return EnchantmentHelper.getItemEnchantmentLevel(holder, stack);
     }
 
     private static void checkMilestones(OreType type, int count) {
         com.miningstats.config.ModConfig config = com.miningstats.config.ModConfig.getInstance();
         int threshold = config.getMilestoneThreshold(type);
         if (threshold > 0 && count > 0 && count % threshold == 0) {
-            MinecraftClient client = MinecraftClient.getInstance();
+            Minecraft client = Minecraft.getInstance();
             if (client.player != null) {
-                client.player.sendMessage(
-                        net.minecraft.text.Text.translatable("miningstats.milestone", count, type.getDisplayName())
-                                .styled(style -> style.withColor(0xFFD700)),
-                        false
+                client.player.sendSystemMessage(
+                        Component.translatable("miningstats.milestone", count, type.getDisplayName())
+                                .withStyle(style -> style.withColor(0xFFD700))
                 );
             }
         }

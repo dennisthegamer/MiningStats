@@ -14,9 +14,6 @@
 	"entrypoints": {
 		"client": [
 			"com.miningstats.MiningStatsClient"
-		],
-		"modmenu": [
-			"com.miningstats.config.ModMenuIntegration"
 		]
 	},
 	"mixins": [
