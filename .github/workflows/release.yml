@@ -1,47 +1,56 @@
-# Automatically create GitHub releases with build artifacts
-# for every push to the mc1.21-1.21.8 branch
+# Build all three Minecraft version branches and create a single GitHub release
+# with all JAR files. Triggered manually or on version tag push.
 
 name: Release
 
 on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Release version (e.g. 1.1.0)'
+        required: true
   push:
-    branches:
-      - mc1.21-1.21.8
+    tags:
+      - 'v*'
 
 jobs:
   build:
-    name: Build Artifacts
+    name: Build ${{ matrix.branch }}
+    strategy:
+      matrix:
+        include:
+          - branch: mc26.1
+            java-version: '25-ea'
+            mc-label: 'mc26.1'
+          - branch: mc1.21.9-1.21.11
+            java-version: '21'
+            mc-label: 'mc1.21.9-1.21.11'
+          - branch: mc1.21-1.21.8
+            java-version: '21'
+            mc-label: 'mc1.21-1.21.8'
     runs-on: ubuntu-24.04
-    outputs:
-      mod_version: ${{ steps.version.outputs.mod_version }}
-      minecraft_version: ${{ steps.version.outputs.minecraft_version }}
-      fabric_version: ${{ steps.version.outputs.fabric_version }}
-      loader_version: ${{ steps.version.outputs.loader_version }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          ref: ${{ matrix.branch }}
 
       - name: Extract version information
         id: version
         run: |
           VERSION=$(grep '^mod_version=' gradle.properties | cut -d'=' -f2)
           MC_VERSION=$(grep '^minecraft_version=' gradle.properties | cut -d'=' -f2)
-          FABRIC_VERSION=$(grep '^fabric_version=' gradle.properties | cut -d'=' -f2)
-          LOADER_VERSION=$(grep '^loader_version=' gradle.properties | cut -d'=' -f2)
           echo "mod_version=$VERSION" >> $GITHUB_OUTPUT
           echo "minecraft_version=$MC_VERSION" >> $GITHUB_OUTPUT
-          echo "fabric_version=$FABRIC_VERSION" >> $GITHUB_OUTPUT
-          echo "loader_version=$LOADER_VERSION" >> $GITHUB_OUTPUT
-          echo "Extracted versions: mod=$VERSION, minecraft=$MC_VERSION, fabric=$FABRIC_VERSION, loader=$LOADER_VERSION"
 
       - name: Validate Gradle wrapper
         uses: gradle/actions/wrapper-validation@v4
 
-      - name: Setup JDK 21
+      - name: Setup JDK ${{ matrix.java-version }}
         uses: actions/setup-java@v4
         with:
-          java-version: '21'
-          distribution: 'microsoft'
+          java-version: ${{ matrix.java-version }}
+          distribution: 'temurin'
 
       - name: Make Gradle wrapper executable
         run: chmod +x ./gradlew
@@ -49,10 +58,22 @@ jobs:
       - name: Build with Gradle
         run: ./gradlew build
 
+      - name: Rename JAR files
+        run: |
+          VERSION=$(grep '^mod_version=' gradle.properties | cut -d'=' -f2)
+          cd build/libs
+          for jar in miningstats-*.jar; do
+            if [[ "$jar" == *"-sources.jar" ]]; then
+              mv "$jar" "miningstats-${VERSION}-${{ matrix.mc-label }}-sources.jar"
+            else
+              mv "$jar" "miningstats-${VERSION}-${{ matrix.mc-label }}.jar"
+            fi
+          done
+
       - name: Upload build artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: build-artifacts-${{ steps.version.outputs.mod_version }}
+          name: build-${{ matrix.mc-label }}
           path: build/libs/
           retention-days: 7
 
@@ -66,23 +87,39 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
+          ref: mc26.1
           fetch-depth: 0
 
-      - name: Download build artifacts
+      - name: Determine version
+        id: version
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "version=${{ github.event.inputs.version }}" >> $GITHUB_OUTPUT
+          else
+            TAG="${{ github.ref_name }}"
+            echo "version=${TAG#v}" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Download all build artifacts
         uses: actions/download-artifact@v4
         with:
-          name: build-artifacts-${{ needs.build.outputs.mod_version }}
-          path: build/libs/
+          path: artifacts/
+          merge-multiple: false
+
+      - name: Collect all JARs
+        run: |
+          mkdir -p release-jars
+          find artifacts/ -name "*.jar" -exec cp {} release-jars/ \;
+          echo "Release JARs:"
+          ls -la release-jars/
 
       - name: Extract changelog for version
         id: changelog
         run: |
-          VERSION="${{ needs.build.outputs.mod_version }}"
-          # Extract section between [VERSION] and next [VERSION] or end
+          VERSION="${{ steps.version.outputs.version }}"
           CHANGELOG=$(awk "/## \[$VERSION\]/{flag=1; next} /## \[.*\]/{flag=0} flag" CHANGELOG.md | sed '/^$/d')
 
           if [ -z "$CHANGELOG" ]; then
-            echo "Warning: No CHANGELOG entry found for version $VERSION"
             CHANGELOG="No changelog entry available for this version."
           fi
 
@@ -92,63 +129,40 @@ jobs:
             echo 'EOF'
           } >> $GITHUB_OUTPUT
 
-      - name: Get commits since last release
-        id: commits
-        run: |
-          LAST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "")
-          if [ -z "$LAST_TAG" ]; then
-            echo "No previous tag found, including all commits"
-            COMMITS=$(git log --pretty=format:"- %s (%h)" --no-merges | head -20)
-          else
-            echo "Last tag: $LAST_TAG"
-            COMMITS=$(git log $LAST_TAG..HEAD --pretty=format:"- %s (%h)" --no-merges)
-          fi
-
-          {
-            echo 'commits<<EOF'
-            echo "$COMMITS"
-            echo 'EOF'
-          } >> $GITHUB_OUTPUT
-
       - name: Generate release body
         run: |
-          cat << 'RELEASE_BODY' > release_body.md
-          ## What's New in v${{ needs.build.outputs.mod_version }}
+          VERSION="${{ steps.version.outputs.version }}"
+          cat > release_body.md << EOF
+          ## What's New in v${VERSION}
 
           ${{ steps.changelog.outputs.changelog }}
 
-          ## Compatibility
+          ## Downloads
 
-          - **Minecraft:** ${{ needs.build.outputs.minecraft_version }} (supports 1.21 through 1.21.8)
-          - **Fabric Loader:** ${{ needs.build.outputs.loader_version }}+
-          - **Fabric API:** ${{ needs.build.outputs.fabric_version }}
-          - **Java:** 21+
+          | Minecraft Version | File |
+          |---|---|
+          | 26.1 | \`miningstats-${VERSION}-mc26.1.jar\` |
+          | 1.21.9 - 1.21.11 | \`miningstats-${VERSION}-mc1.21.9-1.21.11.jar\` |
+          | 1.21 - 1.21.8 | \`miningstats-${VERSION}-mc1.21-1.21.8.jar\` |
 
-          ## Build Artifacts
+          ## Requirements
 
-          - `miningstats-${{ needs.build.outputs.mod_version }}.jar` - Main mod file (download this)
-          - `miningstats-${{ needs.build.outputs.mod_version }}-sources.jar` - Source code
-
-          ## Recent Commits
-
-          ${{ steps.commits.outputs.commits }}
+          - **Fabric Loader:** 0.18.3+
+          - **Fabric API:** Required
+          - **Java:** 21+ (Java 25+ for MC 26.1)
+          - **Optional:** Cloth Config, Mod Menu
 
           ---
 
-          **Installation:** Download the main JAR file and place it in your mods folder along with Fabric API.
-
-          For detailed installation instructions, see the [README](https://github.com/dennisthegamer/MiningStats/blob/mc1.21-1.21.8/README.md).
-          RELEASE_BODY
+          **Installation:** Download the JAR matching your Minecraft version and place it in your \`mods\` folder along with Fabric API.
+          EOF
 
       - name: Create Release
-        uses: andelf/nightly-release@main
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        uses: softprops/action-gh-release@v2
         with:
-          tag_name: v${{ needs.build.outputs.mod_version }}
-          name: MiningStats v${{ needs.build.outputs.mod_version }}
-          prerelease: false
+          tag_name: v${{ steps.version.outputs.version }}
+          name: MiningStats v${{ steps.version.outputs.version }}
           body_path: release_body.md
-          files: |
-            build/libs/miningstats-*.jar
-            build/libs/miningstats-*-sources.jar
+          files: release-jars/*.jar
+          draft: false
+          prerelease: false
