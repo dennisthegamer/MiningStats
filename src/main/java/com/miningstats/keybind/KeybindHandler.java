@@ -13,6 +13,8 @@ import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
 import org.lwjgl.glfw.GLFW;
 
+import java.util.Map;
+
 public class KeybindHandler {
 
     private static KeyBinding compactKey;
@@ -53,6 +55,7 @@ public class KeybindHandler {
             SessionData session = SessionData.getInstance();
             sendSessionSummary(client);
             session.reset();
+            session.deleteSavedSession();
             HudEffects.triggerResetMessage();
 
             client.player.playSound(SoundEvents.ENTITY_EXPERIENCE_ORB_PICKUP, 1.0f, 1.0f);
@@ -108,14 +111,17 @@ public class KeybindHandler {
                 false
         );
 
-        // Per-ore breakdown
+        // Per-ore breakdown (respect mergeDeepslate config)
+        Map<OreType, Integer> displayCounts = config.mergeDeepslate
+                ? session.getMergedOreCounts()
+                : session.getOreCounts();
         StringBuilder breakdown = new StringBuilder("  ");
         boolean first = true;
-        for (OreType type : OreType.values()) {
-            int count = session.getOreCount(type);
+        for (Map.Entry<OreType, Integer> entry : displayCounts.entrySet()) {
+            int count = entry.getValue();
             if (count <= 0) continue;
             if (!first) breakdown.append(" | ");
-            breakdown.append(type.getDisplayName()).append(": ").append(count);
+            breakdown.append(entry.getKey().getDisplayName()).append(": ").append(count);
             first = false;
         }
         if (!first) {

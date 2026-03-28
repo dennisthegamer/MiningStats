@@ -1,94 +1,126 @@
 package com.miningstats.config;
 
+import com.miningstats.data.OreType;
 import me.shedaniel.clothconfig2.api.ConfigBuilder;
 import me.shedaniel.clothconfig2.api.ConfigCategory;
 import me.shedaniel.clothconfig2.api.ConfigEntryBuilder;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.text.Text;
 
+import java.util.ArrayList;
+import java.util.Optional;
+
 public class ConfigScreen {
 
     public static Screen create(Screen parent) {
         ModConfig config = ModConfig.getInstance();
+        ModConfig defaults = new ModConfig();
 
         ConfigBuilder builder = ConfigBuilder.create()
                 .setParentScreen(parent)
                 .setTitle(Text.translatable("config.miningstats.title"))
                 .setSavingRunnable(config::save);
 
-        ConfigEntryBuilder entryBuilder = builder.entryBuilder();
+        ConfigEntryBuilder entry = builder.entryBuilder();
 
-        // === HUD CATEGORY ===
+        // === HUD Settings ===
         ConfigCategory hud = builder.getOrCreateCategory(
-                Text.translatable("config.miningstats.category.hud")
-        );
+                Text.translatable("config.miningstats.category.hud"));
 
-        hud.addEntry(entryBuilder.startSelector(
+        hud.addEntry(entry.startSelector(
                         Text.translatable("config.miningstats.hud_position"),
                         new String[]{"TOP_LEFT", "TOP_RIGHT", "BOTTOM_LEFT", "BOTTOM_RIGHT"},
-                        config.hudPosition
-                )
+                        config.hudPosition)
                 .setDefaultValue("BOTTOM_LEFT")
                 .setTooltip(Text.translatable("config.miningstats.hud_position.tooltip"))
-                .setSaveConsumer(value -> config.hudPosition = value)
+                .setSaveConsumer(v -> config.hudPosition = v)
                 .build());
 
-        hud.addEntry(entryBuilder.startBooleanToggle(
+        hud.addEntry(entry.startBooleanToggle(
                         Text.translatable("config.miningstats.hud_visible_always"),
-                        config.hudVisibleAlways
-                )
-                .setDefaultValue(false)
+                        config.hudVisibleAlways)
+                .setDefaultValue(defaults.hudVisibleAlways)
                 .setTooltip(Text.translatable("config.miningstats.hud_visible_always.tooltip"))
-                .setSaveConsumer(value -> config.hudVisibleAlways = value)
+                .setSaveConsumer(v -> config.hudVisibleAlways = v)
                 .build());
 
-        hud.addEntry(entryBuilder.startFloatField(
+        hud.addEntry(entry.startFloatField(
                         Text.translatable("config.miningstats.hud_opacity"),
-                        config.hudOpacity
-                )
-                .setDefaultValue(0.6f)
+                        config.hudOpacity)
+                .setDefaultValue(defaults.hudOpacity)
                 .setMin(0.0f)
                 .setMax(1.0f)
                 .setTooltip(Text.translatable("config.miningstats.hud_opacity.tooltip"))
-                .setSaveConsumer(value -> config.hudOpacity = value)
+                .setSaveConsumer(v -> config.hudOpacity = v)
                 .build());
 
-        // === SESSION CATEGORY ===
+        // === Session Settings ===
         ConfigCategory session = builder.getOrCreateCategory(
-                Text.translatable("config.miningstats.category.session")
-        );
+                Text.translatable("config.miningstats.category.session"));
 
-        session.addEntry(entryBuilder.startBooleanToggle(
+        session.addEntry(entry.startBooleanToggle(
                         Text.translatable("config.miningstats.show_session_summary"),
-                        config.showSessionSummary
-                )
-                .setDefaultValue(true)
+                        config.showSessionSummary)
+                .setDefaultValue(defaults.showSessionSummary)
                 .setTooltip(Text.translatable("config.miningstats.show_session_summary.tooltip"))
-                .setSaveConsumer(value -> config.showSessionSummary = value)
+                .setSaveConsumer(v -> config.showSessionSummary = v)
                 .build());
 
-        // === TRACKING CATEGORY ===
+        session.addEntry(entry.startBooleanToggle(
+                        Text.translatable("config.miningstats.persist_sessions"),
+                        config.persistSessions)
+                .setDefaultValue(defaults.persistSessions)
+                .setTooltip(Text.translatable("config.miningstats.persist_sessions.tooltip"))
+                .setSaveConsumer(v -> config.persistSessions = v)
+                .build());
+
+        // === Tracking Settings ===
         ConfigCategory tracking = builder.getOrCreateCategory(
-                Text.translatable("config.miningstats.category.tracking")
-        );
+                Text.translatable("config.miningstats.category.tracking"));
 
-        tracking.addEntry(entryBuilder.startBooleanToggle(
+        tracking.addEntry(entry.startBooleanToggle(
                         Text.translatable("config.miningstats.merge_deepslate"),
-                        config.mergeDeepslate
-                )
-                .setDefaultValue(true)
+                        config.mergeDeepslate)
+                .setDefaultValue(defaults.mergeDeepslate)
                 .setTooltip(Text.translatable("config.miningstats.merge_deepslate.tooltip"))
-                .setSaveConsumer(value -> config.mergeDeepslate = value)
+                .setSaveConsumer(v -> config.mergeDeepslate = v)
                 .build());
 
-        tracking.addEntry(entryBuilder.startStrList(
+        tracking.addEntry(entry.startStrList(
                         Text.translatable("config.miningstats.tracked_ores"),
-                        config.trackedOres
-                )
-                .setDefaultValue(java.util.List.of())
+                        new ArrayList<>(config.trackedOres))
+                .setDefaultValue(defaults.trackedOres)
                 .setTooltip(Text.translatable("config.miningstats.tracked_ores.tooltip"))
-                .setSaveConsumer(value -> config.trackedOres = new java.util.ArrayList<>(value))
+                .setCellErrorSupplier(value -> {
+                    if (value == null || value.isBlank()) return Optional.of(Text.literal("Cannot be empty"));
+                    if (!value.contains(":")) return Optional.of(Text.literal("Use format mod_id:block_id"));
+                    return Optional.empty();
+                })
+                .setSaveConsumer(v -> config.trackedOres = new ArrayList<>(v))
                 .build());
+
+        // === Milestone Settings ===
+        ConfigCategory milestones = builder.getOrCreateCategory(
+                Text.translatable("config.miningstats.category.milestones"));
+
+        for (OreType type : OreType.values()) {
+            if (type.isDeepslate()) continue;
+            String key = type.name().toLowerCase();
+            milestones.addEntry(entry.startIntField(
+                            Text.translatable("config.miningstats.milestone." + key),
+                            config.milestones.getOrDefault(key, 0))
+                    .setDefaultValue(defaults.milestones.getOrDefault(key, 0))
+                    .setMin(0)
+                    .setTooltip(Text.translatable("config.miningstats.milestone.tooltip", type.getDisplayName()))
+                    .setSaveConsumer(v -> {
+                        if (v > 0) {
+                            config.milestones.put(key, v);
+                        } else {
+                            config.milestones.remove(key);
+                        }
+                    })
+                    .build());
+        }
 
         return builder.build();
     }

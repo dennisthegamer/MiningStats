@@ -29,6 +29,7 @@
 		"fabric-api": "*"
 	},
 	"suggests": {
-		"cloth-config": ">=15.0.0"
+		"cloth-config": ">=15.0.0",
+		"modmenu": "*"
 	}
 }

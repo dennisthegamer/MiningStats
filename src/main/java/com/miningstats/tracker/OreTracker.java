@@ -12,11 +12,31 @@ import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.enchantment.Enchantments;
 import net.minecraft.item.ItemStack;
 import net.minecraft.registry.RegistryKeys;
+import net.minecraft.registry.entry.RegistryEntry;
+import net.minecraft.enchantment.Enchantment;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.text.Text;
 
 import java.util.Optional;
 
 public class OreTracker {
+
+    private static RegistryEntry<Enchantment> cachedSilkTouch;
+    private static RegistryEntry<Enchantment> cachedFortune;
+
+    private static void ensureEnchantmentCache() {
+        if (cachedSilkTouch == null || cachedFortune == null) {
+            var registry = MinecraftClient.getInstance().world.getRegistryManager()
+                    .getOrThrow(RegistryKeys.ENCHANTMENT);
+            cachedSilkTouch = registry.getOrThrow(Enchantments.SILK_TOUCH);
+            cachedFortune = registry.getOrThrow(Enchantments.FORTUNE);
+        }
+    }
+
+    public static void invalidateCache() {
+        cachedSilkTouch = null;
+        cachedFortune = null;
+    }
 
     public static void onBlockBroken(BlockPos pos, BlockState state) {
         MinecraftClient client = MinecraftClient.getInstance();
@@ -49,39 +69,31 @@ public class OreTracker {
             }
         }
 
-        // Trigger flash effect for rare ores
-        if (type == OreType.DIAMOND || type == OreType.ANCIENT_DEBRIS) {
+        // Trigger flash effect for rare ores (including deepslate variants)
+        OreType baseType = type.getBaseType();
+        if (baseType == OreType.DIAMOND || baseType == OreType.ANCIENT_DEBRIS) {
             HudEffects.triggerFlash();
         }
 
-        // Check milestones
-        checkMilestones(type, session.getOreCount(type));
+        // Check milestones (use merged count so deepslate contributes)
+        checkMilestones(baseType, session.getMergedOreCount(baseType));
 
         MiningStatsClient.LOGGER.debug("Mined {} (total: {})", type.getDisplayName(), session.getOreCount(type));
     }
 
     private static boolean isPickaxe(ItemStack stack) {
         if (stack.isEmpty()) return false;
-        // Check using the item's mining tags - pickaxes are in the minecraft:pickaxes tag
         return stack.isIn(net.minecraft.registry.tag.ItemTags.PICKAXES);
     }
 
     private static boolean hasSilkTouch(ItemStack stack) {
-        return EnchantmentHelper.getLevel(
-                MinecraftClient.getInstance().world.getRegistryManager()
-                        .getOrThrow(RegistryKeys.ENCHANTMENT)
-                        .getOrThrow(Enchantments.SILK_TOUCH),
-                stack
-        ) > 0;
+        ensureEnchantmentCache();
+        return EnchantmentHelper.getLevel(cachedSilkTouch, stack) > 0;
     }
 
     private static int getFortuneLevel(ItemStack stack) {
-        return EnchantmentHelper.getLevel(
-                MinecraftClient.getInstance().world.getRegistryManager()
-                        .getOrThrow(RegistryKeys.ENCHANTMENT)
-                        .getOrThrow(Enchantments.FORTUNE),
-                stack
-        );
+        ensureEnchantmentCache();
+        return EnchantmentHelper.getLevel(cachedFortune, stack);
     }
 
     private static void checkMilestones(OreType type, int count) {
@@ -91,7 +103,7 @@ public class OreTracker {
             MinecraftClient client = MinecraftClient.getInstance();
             if (client.player != null) {
                 client.player.sendMessage(
-                        net.minecraft.text.Text.translatable("miningstats.milestone", count, type.getDisplayName())
+                        Text.translatable("miningstats.milestone", count, type.getDisplayName())
                                 .styled(style -> style.withColor(0xFFD700)),
                         false
                 );
