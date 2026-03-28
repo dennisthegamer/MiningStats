@@ -11,6 +11,8 @@ import net.minecraft.client.resource.language.I18n;
 import net.minecraft.item.ItemStack;
 import net.minecraft.registry.tag.ItemTags;
 
+import java.util.Map;
+
 public class HudRenderer {
 
     private static boolean compactMode = false;
@@ -43,8 +45,8 @@ public class HudRenderer {
         if (client.player == null) return false;
         ItemStack mainHand = client.player.getMainHandStack();
         ItemStack offHand = client.player.getOffHandStack();
-        return mainHand.isIn(net.minecraft.registry.tag.ItemTags.PICKAXES)
-                || offHand.isIn(net.minecraft.registry.tag.ItemTags.PICKAXES);
+        return mainHand.isIn(ItemTags.PICKAXES)
+                || offHand.isIn(ItemTags.PICKAXES);
     }
 
     private static void renderCompact(DrawContext context, MinecraftClient client) {
@@ -85,10 +87,19 @@ public class HudRenderer {
         int iconSize = 16;
         int textOffsetX = iconSize + 4;
 
+        // Get display counts (merged or separate based on config)
+        boolean merge = config.mergeDeepslate;
+        Map<OreType, Integer> displayCounts = merge
+                ? session.getMergedOreCounts()
+                : session.getOreCounts();
+        Map<OreType, Integer> displayBonuses = merge
+                ? session.getMergedFortuneBonuses()
+                : null;
+
         // Calculate HUD dimensions
         int oreLines = 0;
-        for (OreType type : OreType.values()) {
-            if (session.getOreCount(type) > 0) oreLines++;
+        for (int count : displayCounts.values()) {
+            if (count > 0) oreLines++;
         }
 
         // Title + ore lines (no more fortune total row)
@@ -133,8 +144,9 @@ public class HudRenderer {
         // Ore lines with icons and right-aligned counts
         int rightEdge = x + hudWidth - padding;
 
-        for (OreType type : OreType.values()) {
-            int count = session.getOreCount(type);
+        for (Map.Entry<OreType, Integer> entry : displayCounts.entrySet()) {
+            OreType type = entry.getKey();
+            int count = entry.getValue();
             if (count <= 0) continue;
 
             // Draw item icon
@@ -146,7 +158,9 @@ public class HudRenderer {
             context.drawText(textRenderer, type.getDisplayName(), x + padding + textOffsetX, currentY, 0xFFFFFFFF, true);
 
             // Draw fortune bonus (right-aligned at edge) if > 0
-            int fortuneBonus = session.getFortuneBonus(type);
+            int fortuneBonus = displayBonuses != null
+                    ? displayBonuses.getOrDefault(type, 0)
+                    : session.getFortuneBonus(type);
             if (fortuneBonus > 0) {
                 String bonusText = "(+" + fortuneBonus + ")";
                 int bonusWidth = textRenderer.getWidth(bonusText);

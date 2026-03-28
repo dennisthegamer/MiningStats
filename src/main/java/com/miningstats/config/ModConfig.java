@@ -31,6 +31,7 @@ public class ModConfig {
 
     // Session Settings
     public boolean showSessionSummary = true;
+    public boolean persistSessions = false;
 
     // Tracking Settings
     public boolean mergeDeepslate = true;
