@@ -58,18 +58,6 @@ jobs:
       - name: Build with Gradle
         run: ./gradlew build
 
-      - name: Rename JAR files
-        run: |
-          VERSION=$(grep '^mod_version=' gradle.properties | cut -d'=' -f2)
-          cd build/libs
-          for jar in miningstats-*.jar; do
-            if [[ "$jar" == *"-sources.jar" ]]; then
-              mv "$jar" "miningstats-${VERSION}-${{ matrix.mc-label }}-sources.jar"
-            else
-              mv "$jar" "miningstats-${VERSION}-${{ matrix.mc-label }}.jar"
-            fi
-          done
-
       - name: Upload build artifacts
         uses: actions/upload-artifact@v4
         with:
@@ -141,9 +129,9 @@ jobs:
 
           | Minecraft Version | File |
           |---|---|
-          | 26.1 | \`miningstats-${VERSION}-mc26.1.jar\` |
-          | 1.21.9 - 1.21.11 | \`miningstats-${VERSION}-mc1.21.9-1.21.11.jar\` |
-          | 1.21 - 1.21.8 | \`miningstats-${VERSION}-mc1.21-1.21.8.jar\` |
+          | 26.1 | \`miningstats-mc26.1-${VERSION}.jar\` |
+          | 1.21.9 - 1.21.11 | \`miningstats-mc1.21.11-${VERSION}.jar\` |
+          | 1.21 - 1.21.8 | \`miningstats-mc1.21.8-${VERSION}.jar\` |
 
           ## Requirements
 
