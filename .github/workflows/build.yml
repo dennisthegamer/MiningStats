@@ -8,17 +8,28 @@ on: [pull_request, push]
 
 jobs:
   build:
+    strategy:
+      matrix:
+        include:
+          - branch: mc26.1
+            java-version: '25-ea'
+          - branch: mc1.21.9-1.21.11
+            java-version: '21'
+          - branch: mc1.21-1.21.8
+            java-version: '21'
     runs-on: ubuntu-24.04
     steps:
       - name: checkout repository
         uses: actions/checkout@v4
+        with:
+          ref: ${{ matrix.branch }}
       - name: validate gradle wrapper
         uses: gradle/actions/wrapper-validation@v4
-      - name: setup jdk
+      - name: setup jdk ${{ matrix.java-version }}
         uses: actions/setup-java@v4
         with:
-          java-version: '21'
-          distribution: 'microsoft'
+          java-version: ${{ matrix.java-version }}
+          distribution: 'temurin'
       - name: make gradle wrapper executable
         run: chmod +x ./gradlew
       - name: build
@@ -26,5 +37,5 @@ jobs:
       - name: capture build artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: Artifacts
+          name: Artifacts-${{ matrix.branch }}
           path: build/libs/
