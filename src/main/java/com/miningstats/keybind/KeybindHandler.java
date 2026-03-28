@@ -57,6 +57,7 @@ public class KeybindHandler {
             SessionData session = SessionData.getInstance();
             sendSessionSummary(client);
             session.reset();
+            session.deleteSavedSession();
             HudEffects.triggerResetMessage();
 
             client.player.playSound(SoundEvents.EXPERIENCE_ORB_PICKUP, 1.0f, 1.0f);
@@ -107,14 +108,17 @@ public class KeybindHandler {
                         .withStyle(style -> style.withColor(0xFFFFFF))
         );
 
-        // Per-ore breakdown
+        // Per-ore breakdown (respect mergeDeepslate config)
+        java.util.Map<OreType, Integer> displayCounts = config.mergeDeepslate
+                ? session.getMergedOreCounts()
+                : session.getOreCounts();
         StringBuilder breakdown = new StringBuilder("  ");
         boolean first = true;
-        for (OreType type : OreType.values()) {
-            int count = session.getOreCount(type);
+        for (java.util.Map.Entry<OreType, Integer> entry : displayCounts.entrySet()) {
+            int count = entry.getValue();
             if (count <= 0) continue;
             if (!first) breakdown.append(" | ");
-            breakdown.append(type.getDisplayName()).append(": ").append(count);
+            breakdown.append(entry.getKey().getDisplayName()).append(": ").append(count);
             first = false;
         }
         if (!first) {

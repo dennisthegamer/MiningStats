@@ -7,6 +7,7 @@ import com.miningstats.hud.HudEffects;
 import com.miningstats.hud.HudRenderer;
 import com.miningstats.keybind.KeybindHandler;
 import com.miningstats.tracker.FortuneTracker;
+import com.miningstats.tracker.OreTracker;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.rendering.v1.hud.HudElementRegistry;
@@ -59,23 +60,44 @@ public class MiningStatsClient implements ClientModInitializer {
 			boolean inWorld = client.level != null && client.player != null;
 
 			if (inWorld && !wasInWorld) {
-				// Just joined a world -- reset data but don't start session
-				SessionData.getInstance().reset();
+				// Just joined a world -- try to restore saved session
+				SessionData session = SessionData.getInstance();
+				session.reset();
+				if (ModConfig.getInstance().persistSessions && session.loadFromDisk()) {
+					LOGGER.info("World joined -- restored saved session");
+				} else {
+					LOGGER.info("World joined -- session ready to start");
+				}
 				hintShown = false;
-				LOGGER.info("World joined -- session ready to start");
 			} else if (inWorld && !hintShown && client.player != null) {
 				// Show hint once after joining
-				client.player.sendSystemMessage(
-						Component.translatable("miningstats.hint")
-								.withStyle(style -> style.withColor(0xFFD700))
-				);
+				SessionData session = SessionData.getInstance();
+				if (session.getTotalOres() > 0) {
+					client.player.sendSystemMessage(
+							Component.translatable("miningstats.session.restored")
+									.withStyle(style -> style.withColor(0x55FF55))
+					);
+				} else {
+					client.player.sendSystemMessage(
+							Component.translatable("miningstats.hint")
+									.withStyle(style -> style.withColor(0xFFD700))
+					);
+				}
 				hintShown = true;
 			} else if (!inWorld && wasInWorld) {
-				// Just left a world -- show summary if session was active
-				if (client.player != null && SessionData.getInstance().getTotalOres() > 0) {
-					KeybindHandler.sendSessionSummary(client);
+				// Just left a world -- save/summarize session
+				SessionData session = SessionData.getInstance();
+				if (session.getTotalOres() > 0) {
+					if (client.player != null) {
+						KeybindHandler.sendSessionSummary(client);
+					}
+					if (ModConfig.getInstance().persistSessions) {
+						session.saveToDisk();
+						LOGGER.info("Session saved to disk");
+					}
 				}
-				SessionData.getInstance().reset();
+				session.reset();
+				OreTracker.invalidateCache();
 				LOGGER.info("Session ended");
 			}
 

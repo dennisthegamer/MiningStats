@@ -51,7 +51,7 @@ public class FortuneTracker {
         AABB searchBox = new AABB(pendingPos).inflate(2.0);
         List<ItemEntity> items = client.level.getEntities(
                 EntityType.ITEM, searchBox,
-                entity -> entity.getItem().is(holder -> holder.is(expectedItem.builtInRegistryHolder())) && entity.getAge() <= 5
+                entity -> entity.getItem().getItem() == expectedItem && entity.getAge() <= 5
         );
 
         int actualDrops = 0;

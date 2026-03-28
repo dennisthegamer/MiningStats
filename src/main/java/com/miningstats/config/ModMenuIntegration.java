@@ -7,6 +7,6 @@ public class ModMenuIntegration implements ModMenuApi {
 
     @Override
     public ConfigScreenFactory<?> getModConfigScreenFactory() {
-        return parent -> null; // Cloth Config not yet available for MC 26.1
+        return ModConfigScreen::create;
     }
 }
