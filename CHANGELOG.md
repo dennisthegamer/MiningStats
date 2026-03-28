@@ -2,6 +2,22 @@
 
 All notable changes to MiningStats will be documented in this file.
 
+## [1.1.0]
+
+### Added
+- Deepslate ore variants tracked separately with configurable merge toggle
+- Session persistence: save and restore sessions across world leaves
+- Configurable milestone notifications per ore type
+- Custom ore tracking via block IDs (e.g. modded ores)
+- Milestones configuration UI in Cloth Config screen
+- Session restored notification when rejoining a world
+- German localization (de_de)
+
+### Improved
+- Enchantment lookups cached for better performance
+- Session summary respects mergeDeepslate setting
+- HUD display supports merged deepslate counts and fortune bonuses
+
 ## [1.0.0]
 
 ### Added
