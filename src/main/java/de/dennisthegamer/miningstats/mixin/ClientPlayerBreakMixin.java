@@ -1,6 +1,6 @@
-package com.miningstats.mixin;
+package de.dennisthegamer.miningstats.mixin;
 
-import com.miningstats.tracker.OreTracker;
+import de.dennisthegamer.miningstats.tracker.OreTracker;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.client.multiplayer.MultiPlayerGameMode;
 import net.minecraft.client.Minecraft;

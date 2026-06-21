@@ -1,4 +1,4 @@
-package com.miningstats.data;
+package de.dennisthegamer.miningstats.data;
 
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;

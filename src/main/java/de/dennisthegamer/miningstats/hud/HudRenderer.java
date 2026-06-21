@@ -1,8 +1,8 @@
-package com.miningstats.hud;
+package de.dennisthegamer.miningstats.hud;
 
-import com.miningstats.config.ModConfig;
-import com.miningstats.data.OreType;
-import com.miningstats.data.SessionData;
+import de.dennisthegamer.miningstats.config.ModConfig;
+import de.dennisthegamer.miningstats.data.OreType;
+import de.dennisthegamer.miningstats.data.SessionData;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
@@ -27,7 +27,7 @@ public class HudRenderer {
 
     public static void render(GuiGraphicsExtractor graphics, DeltaTracker deltaTracker) {
         Minecraft client = Minecraft.getInstance();
-        if (client.player == null || client.options.hideGui) return;
+        if (client.player == null || client.gui.hud.isHidden()) return;
 
         ModConfig config = ModConfig.getInstance();
 

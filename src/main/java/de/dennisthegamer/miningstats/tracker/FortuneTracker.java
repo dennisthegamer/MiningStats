@@ -1,10 +1,10 @@
-package com.miningstats.tracker;
+package de.dennisthegamer.miningstats.tracker;
 
-import com.miningstats.data.OreType;
-import com.miningstats.data.SessionData;
+import de.dennisthegamer.miningstats.data.OreType;
+import de.dennisthegamer.miningstats.data.SessionData;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.entity.item.ItemEntity;
-import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.item.Item;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.phys.AABB;
@@ -50,7 +50,7 @@ public class FortuneTracker {
         // Search for item entities near the broken block (only freshly spawned ones)
         AABB searchBox = new AABB(pendingPos).inflate(2.0);
         List<ItemEntity> items = client.level.getEntities(
-                EntityType.ITEM, searchBox,
+                EntityTypes.ITEM, searchBox,
                 entity -> entity.getItem().getItem() == expectedItem && entity.getAge() <= 5
         );
 

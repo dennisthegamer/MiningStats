@@ -1,4 +1,4 @@
-package com.miningstats.hud;
+package de.dennisthegamer.miningstats.hud;
 
 public class HudEffects {
 

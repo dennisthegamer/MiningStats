@@ -11,33 +11,27 @@ base {
 }
 
 repositories {
-	// Modrinth Maven for ModMenu
+	maven {
+		name = "YACL"
+		url = "https://maven.isxander.dev/releases"
+	}
+	maven {
+		name = "TerraformersMC"
+		url = "https://maven.terraformersmc.com/releases"
+	}
 	maven {
 		name = "Modrinth"
 		url = "https://api.modrinth.com/maven"
 	}
-
-	// Shedaniel's Maven for Cloth Config
-	maven {
-		name = "Shedaniel"
-		url = "https://maven.shedaniel.me/"
-	}
 }
 
 dependencies {
-	// To change the versions see the gradle.properties file
 	minecraft "com.mojang:minecraft:${project.minecraft_version}"
-	// MC 26.1 is unobfuscated - no mappings needed with fabric-loom plugin
 	implementation "net.fabricmc:fabric-loader:${project.loader_version}"
+	implementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_api_version}"
 
-	// Fabric API
-	implementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
-
-	// ModMenu for mod listing and configuration
+	implementation "dev.isxander:yet-another-config-lib:${project.yacl_version}"
 	implementation "maven.modrinth:modmenu:${project.modmenu_version}"
-
-	// Cloth Config API for configuration screens
-	implementation "me.shedaniel.cloth:cloth-config-fabric:${project.cloth_config_version}"
 }
 
 processResources {

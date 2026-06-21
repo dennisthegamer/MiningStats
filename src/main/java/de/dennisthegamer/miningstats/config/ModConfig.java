@@ -1,8 +1,8 @@
-package com.miningstats.config;
+package de.dennisthegamer.miningstats.config;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.miningstats.data.OreType;
+import de.dennisthegamer.miningstats.data.OreType;
 import net.fabricmc.loader.api.FabricLoader;
 
 import java.io.File;

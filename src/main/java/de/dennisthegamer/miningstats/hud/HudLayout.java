@@ -1,6 +1,6 @@
-package com.miningstats.hud;
+package de.dennisthegamer.miningstats.hud;
 
-import com.miningstats.config.ModConfig;
+import de.dennisthegamer.miningstats.config.ModConfig;
 
 public class HudLayout {
 

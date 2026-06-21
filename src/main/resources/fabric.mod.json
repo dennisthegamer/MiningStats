@@ -13,23 +13,23 @@
 	"environment": "client",
 	"entrypoints": {
 		"client": [
-			"com.miningstats.MiningStatsClient"
+			"de.dennisthegamer.miningstats.MiningStatsClient"
 		],
 		"modmenu": [
-			"com.miningstats.config.ModMenuIntegration"
+			"de.dennisthegamer.miningstats.config.ModMenuIntegration"
 		]
 	},
 	"mixins": [
 		"miningstats.mixins.json"
 	],
 	"depends": {
-		"fabricloader": ">=0.18.4",
-		"minecraft": ">=26.1",
+		"fabricloader": ">=0.19.2",
+		"minecraft": "~26.2-",
 		"java": ">=25",
 		"fabric-api": "*"
 	},
 	"suggests": {
-		"modmenu": "*",
-		"cloth-config": "*"
+		"modmenu": ">=20.0.0",
+		"yet_another_config_lib": ">=3.9.4"
 	}
 }

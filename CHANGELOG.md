@@ -2,6 +2,10 @@
 
 All notable changes to MiningStats will be documented in this file.
 
+## [1.1.1] - 2026-06-21
+- **Support for Minecraft 26.2** — Updated mappings and dependencies for the latest Minecraft version. No functional changes.
+- **YACL** Change config library from cloth-config to yet another config lib.
+
 ## [1.1.0]
 
 ### Added

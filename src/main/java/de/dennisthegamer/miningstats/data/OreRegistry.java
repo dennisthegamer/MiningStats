@@ -1,4 +1,4 @@
-package com.miningstats.data;
+package de.dennisthegamer.miningstats.data;
 
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;

@@ -1,4 +1,4 @@
-package com.miningstats.data;
+package de.dennisthegamer.miningstats.data;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;

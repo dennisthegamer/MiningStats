@@ -1,13 +1,13 @@
-package com.miningstats;
+package de.dennisthegamer.miningstats;
 
-import com.miningstats.config.ModConfig;
-import com.miningstats.data.OreRegistry;
-import com.miningstats.data.SessionData;
-import com.miningstats.hud.HudEffects;
-import com.miningstats.hud.HudRenderer;
-import com.miningstats.keybind.KeybindHandler;
-import com.miningstats.tracker.FortuneTracker;
-import com.miningstats.tracker.OreTracker;
+import de.dennisthegamer.miningstats.config.ModConfig;
+import de.dennisthegamer.miningstats.data.OreRegistry;
+import de.dennisthegamer.miningstats.data.SessionData;
+import de.dennisthegamer.miningstats.hud.HudEffects;
+import de.dennisthegamer.miningstats.hud.HudRenderer;
+import de.dennisthegamer.miningstats.keybind.KeybindHandler;
+import de.dennisthegamer.miningstats.tracker.FortuneTracker;
+import de.dennisthegamer.miningstats.tracker.OreTracker;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.rendering.v1.hud.HudElementRegistry;

@@ -1,10 +1,10 @@
-package com.miningstats.keybind;
+package de.dennisthegamer.miningstats.keybind;
 
-import com.miningstats.data.OreType;
-import com.miningstats.data.SessionData;
-import com.miningstats.config.ModConfig;
-import com.miningstats.hud.HudEffects;
-import com.miningstats.hud.HudRenderer;
+import de.dennisthegamer.miningstats.data.OreType;
+import de.dennisthegamer.miningstats.data.SessionData;
+import de.dennisthegamer.miningstats.config.ModConfig;
+import de.dennisthegamer.miningstats.hud.HudEffects;
+import de.dennisthegamer.miningstats.hud.HudRenderer;
 import net.fabricmc.fabric.api.client.keymapping.v1.KeyMappingHelper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.KeyMapping;

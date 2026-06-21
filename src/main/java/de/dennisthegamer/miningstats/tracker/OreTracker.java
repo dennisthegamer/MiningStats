@@ -1,10 +1,10 @@
-package com.miningstats.tracker;
+package de.dennisthegamer.miningstats.tracker;
 
-import com.miningstats.MiningStatsClient;
-import com.miningstats.data.OreRegistry;
-import com.miningstats.data.OreType;
-import com.miningstats.data.SessionData;
-import com.miningstats.hud.HudEffects;
+import de.dennisthegamer.miningstats.MiningStatsClient;
+import de.dennisthegamer.miningstats.data.OreRegistry;
+import de.dennisthegamer.miningstats.data.OreType;
+import de.dennisthegamer.miningstats.data.SessionData;
+import de.dennisthegamer.miningstats.hud.HudEffects;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
@@ -97,7 +97,7 @@ public class OreTracker {
     }
 
     private static void checkMilestones(OreType type, int count) {
-        com.miningstats.config.ModConfig config = com.miningstats.config.ModConfig.getInstance();
+        de.dennisthegamer.miningstats.config.ModConfig config = de.dennisthegamer.miningstats.config.ModConfig.getInstance();
         int threshold = config.getMilestoneThreshold(type);
         if (threshold > 0 && count > 0 && count % threshold == 0) {
             Minecraft client = Minecraft.getInstance();
