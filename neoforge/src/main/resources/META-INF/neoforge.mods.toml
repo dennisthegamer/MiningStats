@@ -1,0 +1,38 @@
+modLoader = "javafml"
+loaderVersion = "[1,)"
+license = "MIT"
+
+issueTrackerURL = "https://github.com/DennisTheGamer/MiningStats/issues"
+[[mods]]
+modId = "miningstats"
+version = "${version}"
+displayName = "MiningStats"
+displayURL = "https://modrinth.com/mod/miningstats"
+description = '''Tracks mined ores, calculates Fortune bonus, and displays live stats in a configurable HUD overlay.'''
+authors = "Dennis_thegamer"
+logoFile = "assets/miningstats/icon.png"
+
+[[mixins]]
+config = "miningstats.mixins.json"
+
+[[dependencies.miningstats]]
+modId = "neoforge"
+type = "required"
+versionRange = "[26.2.0.0-beta,)"
+ordering = "NONE"
+side = "CLIENT"
+
+[[dependencies.miningstats]]
+modId = "minecraft"
+type = "required"
+versionRange = "[26.2,26.3)"
+ordering = "NONE"
+side = "CLIENT"
+
+# YACL is only needed to open the config screen (same as "suggests" on Fabric)
+[[dependencies.miningstats]]
+modId = "yet_another_config_lib_v3"
+type = "optional"
+versionRange = "[3.9,)"
+ordering = "NONE"
+side = "CLIENT"

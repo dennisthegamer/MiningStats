@@ -1,0 +1,61 @@
+plugins {
+	id 'net.fabricmc.fabric-loom'
+}
+
+version = "${project.mod_version}+mc${project.minecraft_range}"
+group = project.maven_group
+
+base {
+	archivesName = "${project.archives_base_name}-fabric"
+}
+
+repositories {
+	mavenCentral()
+	maven { name = 'Fabric'; url = 'https://maven.fabricmc.net/' }
+	maven { name = 'Modrinth'; url = 'https://api.modrinth.com/maven' }
+	maven { name = 'Xander'; url = 'https://maven.isxander.dev/releases' }
+}
+
+// Shared sources: compiled into this jar (no jar-in-jar, no extra artifact)
+sourceSets.main {
+	java.srcDir rootProject.file('common/src/main/java')
+	resources.srcDir rootProject.file('common/src/main/resources')
+}
+
+dependencies {
+	minecraft "com.mojang:minecraft:${project.minecraft_version}"
+	implementation "net.fabricmc:fabric-loader:${project.loader_version}"
+	implementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
+	implementation "maven.modrinth:modmenu:${project.modmenu_version}"
+	implementation "dev.isxander:yet-another-config-lib:${project.yacl_version}-fabric"
+}
+
+loom {
+	runs.named('client') {
+		ideConfigGenerated true
+		runDir 'run'
+	}
+}
+
+processResources {
+	inputs.property "version", project.version
+	filesMatching("fabric.mod.json") {
+		expand "version": inputs.properties.version
+	}
+}
+
+tasks.withType(JavaCompile).configureEach {
+	it.options.release = 25
+}
+
+java {
+	withSourcesJar()
+	sourceCompatibility = JavaVersion.VERSION_25
+	targetCompatibility = JavaVersion.VERSION_25
+}
+
+jar {
+	from(rootProject.file("LICENSE")) {
+		rename { "${it}_${project.base.archivesName.get()}" }
+	}
+}
