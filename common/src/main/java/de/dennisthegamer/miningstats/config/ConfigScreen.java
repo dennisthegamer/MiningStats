@@ -1,14 +1,12 @@
 package de.dennisthegamer.miningstats.config;
 
 import de.dennisthegamer.miningstats.data.OreType;
-import me.shedaniel.clothconfig2.api.ConfigBuilder;
-import me.shedaniel.clothconfig2.api.ConfigCategory;
-import me.shedaniel.clothconfig2.api.ConfigEntryBuilder;
+import dev.isxander.yacl3.api.*;
+import dev.isxander.yacl3.api.controller.*;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 
 import java.util.ArrayList;
-import java.util.Optional;
 
 public class ConfigScreen {
 
@@ -16,112 +14,104 @@ public class ConfigScreen {
         ModConfig config = ModConfig.getInstance();
         ModConfig defaults = new ModConfig();
 
-        ConfigBuilder builder = ConfigBuilder.create()
-                .setParentScreen(parent)
-                .setTitle(Component.translatable("config.miningstats.title"))
-                .setSavingRunnable(config::save);
-
-        ConfigEntryBuilder entry = builder.entryBuilder();
-
         // === HUD Settings ===
-        ConfigCategory hud = builder.getOrCreateCategory(
-                Component.translatable("config.miningstats.category.hud"));
-
-        hud.addEntry(entry.startSelector(
-                        Component.translatable("config.miningstats.hud_position"),
-                        new String[]{"TOP_LEFT", "TOP_RIGHT", "BOTTOM_LEFT", "BOTTOM_RIGHT"},
-                        config.hudPosition)
-                .setDefaultValue("BOTTOM_LEFT")
-                .setTooltip(Component.translatable("config.miningstats.hud_position.tooltip"))
-                .setSaveConsumer(v -> config.hudPosition = v)
-                .build());
-
-        hud.addEntry(entry.startBooleanToggle(
-                        Component.translatable("config.miningstats.hud_visible_always"),
-                        config.hudVisibleAlways)
-                .setDefaultValue(defaults.hudVisibleAlways)
-                .setTooltip(Component.translatable("config.miningstats.hud_visible_always.tooltip"))
-                .setSaveConsumer(v -> config.hudVisibleAlways = v)
-                .build());
-
-        hud.addEntry(entry.startFloatField(
-                        Component.translatable("config.miningstats.hud_opacity"),
-                        config.hudOpacity)
-                .setDefaultValue(defaults.hudOpacity)
-                .setMin(0.0f)
-                .setMax(1.0f)
-                .setTooltip(Component.translatable("config.miningstats.hud_opacity.tooltip"))
-                .setSaveConsumer(v -> config.hudOpacity = v)
-                .build());
+        var hudCategory = ConfigCategory.createBuilder()
+                .name(Component.translatable("config.miningstats.category.hud"))
+                .option(Option.<ModConfig.HudPosition>createBuilder()
+                        .name(Component.translatable("config.miningstats.hud_position"))
+                        .description(val -> OptionDescription.of(
+                                Component.translatable("config.miningstats.hud_position.tooltip")))
+                        .binding(defaults.getHudPosition(), config::getHudPosition, v -> config.hudPosition = v.name())
+                        .controller(opt -> EnumControllerBuilder.create(opt).enumClass(ModConfig.HudPosition.class))
+                        .build())
+                .option(Option.<Boolean>createBuilder()
+                        .name(Component.translatable("config.miningstats.hud_visible_always"))
+                        .description(val -> OptionDescription.of(
+                                Component.translatable("config.miningstats.hud_visible_always.tooltip")))
+                        .binding(defaults.hudVisibleAlways, () -> config.hudVisibleAlways, v -> config.hudVisibleAlways = v)
+                        .controller(TickBoxControllerBuilder::create)
+                        .build())
+                .option(Option.<Float>createBuilder()
+                        .name(Component.translatable("config.miningstats.hud_opacity"))
+                        .description(val -> OptionDescription.of(
+                                Component.translatable("config.miningstats.hud_opacity.tooltip")))
+                        .binding(defaults.hudOpacity, () -> config.hudOpacity, v -> config.hudOpacity = v)
+                        .controller(opt -> FloatSliderControllerBuilder.create(opt).range(0.0f, 1.0f).step(0.01f))
+                        .build())
+                .build();
 
         // === Session Settings ===
-        ConfigCategory session = builder.getOrCreateCategory(
-                Component.translatable("config.miningstats.category.session"));
-
-        session.addEntry(entry.startBooleanToggle(
-                        Component.translatable("config.miningstats.show_session_summary"),
-                        config.showSessionSummary)
-                .setDefaultValue(defaults.showSessionSummary)
-                .setTooltip(Component.translatable("config.miningstats.show_session_summary.tooltip"))
-                .setSaveConsumer(v -> config.showSessionSummary = v)
-                .build());
-
-        session.addEntry(entry.startBooleanToggle(
-                        Component.translatable("config.miningstats.persist_sessions"),
-                        config.persistSessions)
-                .setDefaultValue(defaults.persistSessions)
-                .setTooltip(Component.translatable("config.miningstats.persist_sessions.tooltip"))
-                .setSaveConsumer(v -> config.persistSessions = v)
-                .build());
+        var sessionCategory = ConfigCategory.createBuilder()
+                .name(Component.translatable("config.miningstats.category.session"))
+                .option(Option.<Boolean>createBuilder()
+                        .name(Component.translatable("config.miningstats.show_session_summary"))
+                        .description(val -> OptionDescription.of(
+                                Component.translatable("config.miningstats.show_session_summary.tooltip")))
+                        .binding(defaults.showSessionSummary, () -> config.showSessionSummary, v -> config.showSessionSummary = v)
+                        .controller(TickBoxControllerBuilder::create)
+                        .build())
+                .option(Option.<Boolean>createBuilder()
+                        .name(Component.translatable("config.miningstats.persist_sessions"))
+                        .description(val -> OptionDescription.of(
+                                Component.translatable("config.miningstats.persist_sessions.tooltip")))
+                        .binding(defaults.persistSessions, () -> config.persistSessions, v -> config.persistSessions = v)
+                        .controller(TickBoxControllerBuilder::create)
+                        .build())
+                .build();
 
         // === Tracking Settings ===
-        ConfigCategory tracking = builder.getOrCreateCategory(
-                Component.translatable("config.miningstats.category.tracking"));
-
-        tracking.addEntry(entry.startBooleanToggle(
-                        Component.translatable("config.miningstats.merge_deepslate"),
-                        config.mergeDeepslate)
-                .setDefaultValue(defaults.mergeDeepslate)
-                .setTooltip(Component.translatable("config.miningstats.merge_deepslate.tooltip"))
-                .setSaveConsumer(v -> config.mergeDeepslate = v)
-                .build());
-
-        tracking.addEntry(entry.startStrList(
-                        Component.translatable("config.miningstats.tracked_ores"),
-                        new ArrayList<>(config.trackedOres))
-                .setDefaultValue(defaults.trackedOres)
-                .setTooltip(Component.translatable("config.miningstats.tracked_ores.tooltip"))
-                .setCellErrorSupplier(value -> {
-                    if (value == null || value.isBlank()) return Optional.of(Component.literal("Cannot be empty"));
-                    if (!value.contains(":")) return Optional.of(Component.literal("Use format mod_id:block_id"));
-                    return Optional.empty();
-                })
-                .setSaveConsumer(v -> config.trackedOres = new ArrayList<>(v))
-                .build());
+        var trackingCategory = ConfigCategory.createBuilder()
+                .name(Component.translatable("config.miningstats.category.tracking"))
+                .option(Option.<Boolean>createBuilder()
+                        .name(Component.translatable("config.miningstats.merge_deepslate"))
+                        .description(val -> OptionDescription.of(
+                                Component.translatable("config.miningstats.merge_deepslate.tooltip")))
+                        .binding(defaults.mergeDeepslate, () -> config.mergeDeepslate, v -> config.mergeDeepslate = v)
+                        .controller(TickBoxControllerBuilder::create)
+                        .build())
+                .group(ListOption.<String>createBuilder()
+                        .name(Component.translatable("config.miningstats.tracked_ores"))
+                        .description(OptionDescription.of(
+                                Component.translatable("config.miningstats.tracked_ores.tooltip")))
+                        .binding(defaults.trackedOres, () -> config.trackedOres, v -> config.trackedOres = new ArrayList<>(v))
+                        .controller(StringControllerBuilder::create)
+                        .initial("minecraft:")
+                        .build())
+                .build();
 
         // === Milestone Settings ===
-        ConfigCategory milestones = builder.getOrCreateCategory(
-                Component.translatable("config.miningstats.category.milestones"));
+        var milestoneCategoryBuilder = ConfigCategory.createBuilder()
+                .name(Component.translatable("config.miningstats.category.milestones"));
 
         for (OreType type : OreType.values()) {
             if (type.isDeepslate()) continue;
             String key = type.name().toLowerCase();
-            milestones.addEntry(entry.startIntField(
-                            Component.translatable("config.miningstats.milestone." + key),
-                            config.milestones.getOrDefault(key, 0))
-                    .setDefaultValue(defaults.milestones.getOrDefault(key, 0))
-                    .setMin(0)
-                    .setTooltip(Component.translatable("config.miningstats.milestone.tooltip", type.getDisplayName()))
-                    .setSaveConsumer(v -> {
-                        if (v > 0) {
-                            config.milestones.put(key, v);
-                        } else {
-                            config.milestones.remove(key);
-                        }
-                    })
+            milestoneCategoryBuilder.option(Option.<Integer>createBuilder()
+                    .name(Component.translatable("config.miningstats.milestone." + key))
+                    .description(val -> OptionDescription.of(
+                            Component.translatable("config.miningstats.milestone.tooltip", type.getDisplayName())))
+                    .binding(
+                            defaults.milestones.getOrDefault(key, 0),
+                            () -> config.milestones.getOrDefault(key, 0),
+                            v -> {
+                                if (v > 0) {
+                                    config.milestones.put(key, v);
+                                } else {
+                                    config.milestones.remove(key);
+                                }
+                            })
+                    .controller(IntegerFieldControllerBuilder::create)
                     .build());
         }
 
-        return builder.build();
+        return YetAnotherConfigLib.createBuilder()
+                .title(Component.translatable("config.miningstats.title"))
+                .save(config::save)
+                .category(hudCategory)
+                .category(sessionCategory)
+                .category(trackingCategory)
+                .category(milestoneCategoryBuilder.build())
+                .build()
+                .generateScreen(parent);
     }
 }

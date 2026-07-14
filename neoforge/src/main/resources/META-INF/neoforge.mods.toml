@@ -36,9 +36,9 @@ versionRange = "[18.0.3,)"
 ordering = "AFTER"
 side = "CLIENT"
 
-# Cloth Config is only needed to open the config screen (same as "suggests" on Fabric)
+# YACL is only needed to open the config screen (same as "suggests" on Fabric)
 [[dependencies.miningstats]]
-modId = "cloth_config"
+modId = "yet_another_config_lib_v3"
 type = "optional"
 versionRange = "[18.0.0,)"
 ordering = "NONE"
