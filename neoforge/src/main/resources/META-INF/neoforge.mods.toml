@@ -1,0 +1,45 @@
+modLoader = "javafml"
+loaderVersion = "[1,)"
+license = "MIT"
+
+issueTrackerURL = "https://github.com/DennisTheGamer/MiningStats/issues"
+[[mods]]
+modId = "miningstats"
+version = "${version}"
+displayName = "MiningStats"
+displayURL = "https://modrinth.com/mod/miningstats"
+description = '''Tracks mined ores, calculates Fortune bonus, and displays live stats in a configurable HUD overlay.'''
+authors = "Dennis_thegamer"
+logoFile = "assets/miningstats/icon.png"
+
+[[mixins]]
+config = "miningstats.mixins.json"
+
+[[dependencies.miningstats]]
+modId = "neoforge"
+type = "required"
+versionRange = "[21.9,21.12)"
+ordering = "NONE"
+side = "CLIENT"
+
+[[dependencies.miningstats]]
+modId = "minecraft"
+type = "required"
+versionRange = "[1.21.9,1.21.12)"
+ordering = "NONE"
+side = "CLIENT"
+
+[[dependencies.miningstats]]
+modId = "architectury"
+type = "required"
+versionRange = "[18.0.3,)"
+ordering = "AFTER"
+side = "CLIENT"
+
+# Cloth Config is only needed to open the config screen (same as "suggests" on Fabric)
+[[dependencies.miningstats]]
+modId = "cloth_config"
+type = "optional"
+versionRange = "[18.0.0,)"
+ordering = "NONE"
+side = "CLIENT"
