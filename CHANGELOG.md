@@ -2,6 +2,18 @@
 
 All notable changes to MiningStats will be documented in this file.
 
+## [1.3.0] - 2026-07-14
+
+### Added
+- **NeoForge support** for Minecraft 26.1-26.1.2 - MiningStats now ships as both a
+  Fabric and a NeoForge jar from one codebase (fabric-loom + neoforged.moddev, shared srcDir)
+
+### Changed
+- Restructured into `common` / `fabric` / `neoforge`; all game logic is shared
+- HUD, keybinds and the tick hook are registered per loader (Fabric HudElementRegistry /
+  NeoForge RegisterGuiLayersEvent); loader calls routed through a Platform service
+- Removed the vendored Fabric HUD API classes (Fabric API now provides them)
+
 ## [1.2.0] - 2026-07-14
 
 ### Changed

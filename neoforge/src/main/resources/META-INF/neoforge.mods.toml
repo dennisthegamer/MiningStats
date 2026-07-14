@@ -1,0 +1,37 @@
+modLoader = "javafml"
+loaderVersion = "[1,)"
+license = "MIT"
+
+issueTrackerURL = "https://github.com/DennisTheGamer/MiningStats/issues"
+[[mods]]
+modId = "miningstats"
+version = "${version}"
+displayName = "MiningStats"
+displayURL = "https://modrinth.com/mod/miningstats"
+description = '''Tracks mined ores, calculates Fortune bonus, and displays live stats in a configurable HUD overlay.'''
+authors = "Dennis_thegamer"
+logoFile = "assets/miningstats/icon.png"
+
+[[mixins]]
+config = "miningstats.mixins.json"
+
+[[dependencies.miningstats]]
+modId = "neoforge"
+type = "required"
+versionRange = "[26.1,26.2)"
+ordering = "NONE"
+side = "CLIENT"
+
+[[dependencies.miningstats]]
+modId = "minecraft"
+type = "required"
+versionRange = "[26.1,26.2)"
+ordering = "NONE"
+side = "CLIENT"
+
+[[dependencies.miningstats]]
+modId = "cloth_config"
+type = "optional"
+versionRange = "[18.0.0,)"
+ordering = "NONE"
+side = "CLIENT"
