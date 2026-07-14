@@ -1,6 +1,6 @@
 {
 	"required": true,
-	"package": "com.miningstats.mixin",
+	"package": "de.dennisthegamer.miningstats.mixin",
 	"compatibilityLevel": "JAVA_21",
 	"client": [
 		"ClientPlayerBreakMixin"

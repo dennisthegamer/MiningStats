@@ -13,8 +13,8 @@
 	"icon": "assets/miningstats/icon.png",
 	"environment": "client",
 	"entrypoints": {
-		"client": ["com.miningstats.fabric.MiningStatsFabric"],
-		"modmenu": ["com.miningstats.fabric.ModMenuIntegration"]
+		"client": ["de.dennisthegamer.miningstats.fabric.MiningStatsFabric"],
+		"modmenu": ["de.dennisthegamer.miningstats.fabric.ModMenuIntegration"]
 	},
 	"mixins": ["miningstats.mixins.json"],
 	"depends": {
