@@ -2,10 +2,10 @@
 
 A client-side Fabric mod that tracks mined ores, calculates Fortune bonuses, and displays live stats in a configurable HUD overlay.
 
-![Minecraft](https://img.shields.io/badge/Minecraft-1.21–1.21.11-green)
+![Minecraft](https://img.shields.io/badge/Minecraft-1.21–26.2-green)
 ![Mod Loader](https://img.shields.io/badge/Mod%20Loader-Fabric-blue)
 ![License](https://img.shields.io/badge/License-MIT-yellow)
-![Version](https://img.shields.io/badge/Version-1.0.0-orange)
+![Version](https://img.shields.io/badge/Version-1.2.0-orange)
 
 ## Features
 
@@ -43,7 +43,7 @@ A client-side Fabric mod that tracks mined ores, calculates Fortune bonuses, and
 ## Installation
 
 ### Requirements
-- Minecraft 1.21 - 1.21.11
+- Minecraft 1.21 - 26.2
 - [Fabric Loader](https://fabricmc.net/) >= 0.18.3
 - [Fabric API](https://modrinth.com/mod/fabric-api)
 - Java 21+
@@ -54,7 +54,7 @@ A client-side Fabric mod that tracks mined ores, calculates Fortune bonuses, and
 
 ### Steps
 1. Install Fabric Loader and Fabric API
-2. Download the latest `miningstats-x.x.x.jar` from [Releases](../../releases)
+2. Download the latest `miningstats-fabric-1.2.0+mc1.21-1.21.5.jar` from [Releases](../../releases)
 3. Place the JAR in your `.minecraft/mods/` folder
 4. Launch Minecraft
 
@@ -76,6 +76,7 @@ Configuration is stored in `.minecraft/config/miningstats.json` and can be edite
 
 | Key | Action |
 |-----|--------|
+| **J** | Start / Pause session |
 | **H** | Toggle compact / full HUD mode |
 | **K** | Reset current session |
 
