@@ -62,7 +62,9 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: build-${{ matrix.mc-label }}
-          path: build/libs/
+          path: |
+            fabric/build/libs/
+            neoforge/build/libs/
           retention-days: 7
 
   release:

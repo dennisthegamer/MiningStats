@@ -1,0 +1,12 @@
+{
+	"required": true,
+	"package": "com.miningstats.mixin",
+	"compatibilityLevel": "JAVA_21",
+	"client": [
+		"ClientPlayerBreakMixin",
+		"ItemEntityAccessor"
+	],
+	"injectors": {
+		"defaultRequire": 1
+	}
+}
