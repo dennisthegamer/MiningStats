@@ -19,8 +19,11 @@ jobs:
     strategy:
       matrix:
         include:
+          - branch: mc26.2
+            java-version: '25'
+            mc-label: 'mc26.2'
           - branch: mc26.1
-            java-version: '25-ea'
+            java-version: '25'
             mc-label: 'mc26.1'
           - branch: mc1.21.9-1.21.11
             java-version: '21'
@@ -28,6 +31,9 @@ jobs:
           - branch: mc1.21-1.21.8
             java-version: '21'
             mc-label: 'mc1.21-1.21.8'
+          - branch: mc1.21.5
+            java-version: '21'
+            mc-label: 'mc1.21.5'
     runs-on: ubuntu-24.04
     steps:
       - name: Checkout repository
