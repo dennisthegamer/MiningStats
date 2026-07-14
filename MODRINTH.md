@@ -62,7 +62,7 @@ Configure the mod to your preferences via [Mod Menu](https://modrinth.com/mod/mo
 
 ## 📋 Requirements
 
-- **Minecraft:** 1.21 – 1.21.11
+- **Minecraft:** 1.21 – 26.2
 - **Fabric Loader:** 0.18.3 or higher
 - **Fabric API:** Required
 - **Java:** 21 or higher
