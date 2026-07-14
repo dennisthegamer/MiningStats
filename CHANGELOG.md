@@ -2,6 +2,13 @@
 
 All notable changes to MiningStats will be documented in this file.
 
+## [1.2.0] - 2026-07-14
+
+### Changed
+- Unified version to 1.2.0 across all supported Minecraft version branches
+- Standardized release jar naming to `miningstats-fabric-<version>+mc<range>`
+- Corrected author and contact metadata (Modrinth and GitHub links)
+
 ## [1.1.1] - 2026-06-21
 - **Support for Minecraft 26.2** — Updated mappings and dependencies for the latest Minecraft version. No functional changes.
 - **YACL** Change config library from cloth-config to yet another config lib.
