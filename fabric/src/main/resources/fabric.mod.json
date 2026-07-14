@@ -16,10 +16,10 @@
 	"environment": "client",
 	"entrypoints": {
 		"client": [
-			"com.miningstats.fabric.MiningStatsFabric"
+			"de.dennisthegamer.miningstats.fabric.MiningStatsFabric"
 		],
 		"modmenu": [
-			"com.miningstats.fabric.ModMenuIntegration"
+			"de.dennisthegamer.miningstats.fabric.ModMenuIntegration"
 		]
 	},
 	"mixins": [
