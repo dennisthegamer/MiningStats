@@ -9,6 +9,7 @@ import net.minecraft.resources.Identifier;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModContainer;
+import net.neoforged.fml.ModList;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.neoforge.client.event.ClientTickEvent;
 import net.neoforged.neoforge.client.event.RegisterGuiLayersEvent;
@@ -34,7 +35,10 @@ public final class MiningStatsNeoForge {
         ));
         NeoForge.EVENT_BUS.addListener((ClientTickEvent.Post event) ->
                 MiningStatsClient.onTick(Minecraft.getInstance()));
-        container.registerExtensionPoint(IConfigScreenFactory.class,
-                (modContainer, parent) -> ModConfigScreen.create(parent));
+        // Only register the config screen when YACL is present (ModConfigScreen needs it).
+        if (ModList.get().isLoaded("yet_another_config_lib_v3")) {
+            container.registerExtensionPoint(IConfigScreenFactory.class,
+                    (modContainer, parent) -> ModConfigScreen.create(parent));
+        }
     }
 }
