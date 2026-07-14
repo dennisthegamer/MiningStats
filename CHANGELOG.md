@@ -2,6 +2,17 @@
 
 All notable changes to MiningStats will be documented in this file.
 
+## [1.3.0] - 2026-07-14
+
+### Added
+- **NeoForge support** for Minecraft 1.21-1.21.5 - MiningStats now ships as both
+  a Fabric and a NeoForge jar from one codebase (Architectury multiloader layout)
+
+### Changed
+- Restructured into `common` / `fabric` / `neoforge` modules; all game logic is shared
+- Keybinds, the HUD layer and the tick hook are now registered through Architectury API
+- Architectury API is now a required dependency; ModMenu and YACL are compile-only
+
 ## [1.2.0] - 2026-07-14
 
 ### Changed
