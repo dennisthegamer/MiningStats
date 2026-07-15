@@ -54,7 +54,9 @@ public class HudRenderer {
         SessionData session = SessionData.getInstance();
         ModConfig config = ModConfig.getInstance();
 
-        String text = I18n.get("miningstats.hud.compact", session.getTotalOres(), session.getTotalFortuneBonus());
+        String text = I18n.get("miningstats.hud.compact", session.getTotalOres(), session.getTotalFortuneBonus())
+                + " " + (char) 0x00B7 + " " + session.getFormattedDuration()
+                + (session.isActive() ? "" : " " + (char) 0x23F8);
         int textWidth = font.width(text);
         int padding = HudLayout.getPadding();
         int hudWidth = textWidth + padding * 2;
@@ -132,10 +134,11 @@ public class HudRenderer {
             return;
         }
 
-        // Title (centered) with session status
-        String title = session.isActive()
-                ? I18n.get("miningstats.hud.title.active")
-                : I18n.get("miningstats.hud.title.paused");
+        // Title (centered): base name + running session time; pause glyph while paused
+        String base = I18n.get("miningstats.hud.title.active");
+        if (base.endsWith(":")) base = base.substring(0, base.length() - 1);
+        String title = base + " " + (char) 0x00B7 + " " + session.getFormattedDuration()
+                + (session.isActive() ? "" : " " + (char) 0x23F8);
         int titleColor = session.isActive() ? 0xFFFFFFFF : 0xFFFFAA00;
         int titleX = x + (hudWidth - font.width(title)) / 2;
         context.drawString(font, title, titleX, currentY, titleColor, true);
