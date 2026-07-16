@@ -2,6 +2,9 @@ package de.dennisthegamer.miningstats.config;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import de.dennisthegamer.hudlib.position.HudPlacement;
+import de.dennisthegamer.hudlib.position.HudPositionMigration;
+import de.dennisthegamer.hudlib.position.HudPreset;
 import de.dennisthegamer.miningstats.data.OreType;
 import de.dennisthegamer.miningstats.platform.Platforms;
 
@@ -25,7 +28,13 @@ public class ModConfig {
     private static ModConfig INSTANCE = null;
 
     // HUD Settings
+    /** @deprecated Legacy-4-Ecken-Feld; nur noch zum Migrieren gelesen. Wird nach load() genullt. */
+    @Deprecated
     public String hudPosition = "BOTTOM_LEFT";
+    /** Freie HUD-Position (Anker + Offset). Nach {@link #load()} immer non-null. */
+    public HudPlacement hudPlacement = null;
+    /** Vom Nutzer gespeicherte Positions-Slots. */
+    public List<HudPreset> hudSlots = new ArrayList<>();
     public boolean hudVisibleAlways = false;
     public float hudOpacity = 0.6f;
 
@@ -59,6 +68,7 @@ public class ModConfig {
             try (FileReader reader = new FileReader(CONFIG_FILE)) {
                 ModConfig config = GSON.fromJson(reader, ModConfig.class);
                 if (config != null) {
+                    config.migrateHudPosition();
                     return config;
                 }
             } catch (IOException e) {
@@ -66,8 +76,25 @@ public class ModConfig {
             }
         }
         ModConfig config = new ModConfig();
+        config.migrateHudPosition();
         config.save();
         return config;
+    }
+
+    /**
+     * Einmalige Migration: befüllt {@link #hudPlacement} aus dem Legacy-{@link #hudPosition},
+     * falls noch nicht gesetzt, und stoppt das Persistieren des Legacy-Feldes.
+     * Gson serialisiert null-Felder standardmäßig nicht, daher verschwindet {@code hudPosition}
+     * beim nächsten {@link #save()} aus der JSON.
+     */
+    public void migrateHudPosition() {
+        if (hudPlacement == null) {
+            hudPlacement = HudPositionMigration.fromLegacyCorner(hudPosition);
+        }
+        hudPosition = null;
+        if (hudSlots == null) {
+            hudSlots = new ArrayList<>();
+        }
     }
 
     public void save() {
