@@ -9,8 +9,8 @@
   "config.miningstats.category.session": "Sitzungseinstellungen",
   "config.miningstats.category.tracking": "Tracking Einstellungen",
 
-  "config.miningstats.hud_position": "HUD Position",
-  "config.miningstats.hud_position.tooltip": "Position des HUD-Overlays auf dem Bildschirm",
+  "config.miningstats.hud_edit": "HUD-Position bearbeiten…",
+  "config.miningstats.hud_edit.tooltip": "Öffnet den Editor zum freien Platzieren des HUD und Verwalten von Presets.",
   "config.miningstats.hud_visible_always": "Immer sichtbar",
   "config.miningstats.hud_visible_always.tooltip": "HUD auch ohne Spitzhacke anzeigen",
   "config.miningstats.hud_opacity": "HUD Transparenz",
@@ -50,5 +50,25 @@
   "miningstats.hud.reset": "Sitzung zurückgesetzt!",
   "miningstats.hud.title.active": "Live Stats:",
   "miningstats.hud.title.paused": "Live Stats: \u23F8 Pausiert",
-  "miningstats.hud.fortune": "\u2618 Glücks-Bonus: +%d Items"
+  "miningstats.hud.fortune": "\u2618 Glücks-Bonus: +%d Items",
+
+  "hudlib.editor.title": "HUD-Position bearbeiten",
+  "hudlib.editor.hint": "Linksklick und ziehen, um das HUD zu verschieben.",
+  "hudlib.editor.confirm": "Bestätigen",
+  "hudlib.editor.presets": "Preset wählen",
+  "hudlib.preset.title": "HUD-Presets",
+  "hudlib.preset.apply_named": "Anwenden: %s",
+  "hudlib.preset.rename": "Umbenennen",
+  "hudlib.preset.delete": "Löschen",
+  "hudlib.preset.save": "Aktuelle Position speichern",
+  "hudlib.preset.name_hint": "Slot-Name",
+  "hudlib.anchor.top_left": "Oben Links",
+  "hudlib.anchor.top_center": "Oben Mitte",
+  "hudlib.anchor.top_right": "Oben Rechts",
+  "hudlib.anchor.middle_left": "Mitte Links",
+  "hudlib.anchor.middle_center": "Mitte",
+  "hudlib.anchor.middle_right": "Mitte Rechts",
+  "hudlib.anchor.bottom_left": "Unten Links",
+  "hudlib.anchor.bottom_center": "Unten Mitte",
+  "hudlib.anchor.bottom_right": "Unten Rechts"
 }

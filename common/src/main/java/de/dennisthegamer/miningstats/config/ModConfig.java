@@ -112,16 +112,4 @@ public class ModConfig {
         String key = type.name().toLowerCase();
         return milestones.getOrDefault(key, 0);
     }
-
-    public HudPosition getHudPosition() {
-        try {
-            return HudPosition.valueOf(hudPosition);
-        } catch (IllegalArgumentException e) {
-            return HudPosition.BOTTOM_LEFT;
-        }
-    }
-
-    public enum HudPosition {
-        TOP_LEFT, TOP_RIGHT, BOTTOM_LEFT, BOTTOM_RIGHT
-    }
 }
