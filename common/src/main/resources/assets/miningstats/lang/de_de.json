@@ -9,8 +9,8 @@
   "config.miningstats.category.session": "Sitzungseinstellungen",
   "config.miningstats.category.tracking": "Tracking Einstellungen",
 
-  "config.miningstats.hud_position": "HUD Position",
-  "config.miningstats.hud_position.tooltip": "Position des HUD-Overlays auf dem Bildschirm",
+  "config.miningstats.hud_edit": "HUD-Position bearbeiten…",
+  "config.miningstats.hud_edit.tooltip": "Öffnet den Editor zum freien Platzieren des HUD und Verwalten von Presets.",
   "config.miningstats.hud_visible_always": "Immer sichtbar",
   "config.miningstats.hud_visible_always.tooltip": "HUD auch ohne Spitzhacke anzeigen",
   "config.miningstats.hud_opacity": "HUD Transparenz",
@@ -38,9 +38,9 @@
   "config.miningstats.milestone.ancient_debris": "Antiker Schrott Meilenstein",
 
   "miningstats.milestone": "\u26CF Meilenstein: %1$d %2$s abgebaut!",
-  "miningstats.hint": "\u26CF MiningStats \u2014 Drücke [J] um eine Sitzung zu starten",
+  "miningstats.hint": "\u26CF MiningStats \u2014 Drücke [%s] um eine Sitzung zu starten",
   "miningstats.session.paused": "\u26CF MiningStats \u2014 Sitzung pausiert",
-  "miningstats.session.restored": "\u26CF MiningStats \u2014 Vorherige Sitzung wiederhergestellt! Drücke [J] zum Fortsetzen",
+  "miningstats.session.restored": "\u26CF MiningStats \u2014 Vorherige Sitzung wiederhergestellt! Drücke [%s] zum Fortsetzen",
   "miningstats.session.started": "\u26CF MiningStats \u2014 Sitzung gestartet!",
   "miningstats.session.summary_header": "\u26CF MiningStats \u2014 Sitzungszusammenfassung",
   "miningstats.session.duration": "Dauer: %s",
