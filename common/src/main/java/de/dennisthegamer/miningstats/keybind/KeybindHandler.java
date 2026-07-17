@@ -15,13 +15,15 @@ import org.lwjgl.glfw.GLFW;
 import java.util.Map;
 
 /**
- * Keybinds use a vanilla {@link KeyMapping.Category} on purpose: a custom category needs the
- * Identifier class, whose mojmap name differs between 1.21.10 and 1.21.11, which would crash
- * the single NeoForge jar on 1.21.9/1.21.10.
+ * On this MC range the keybind category is a plain String that doubles as its own translation key.
+ * We reuse the key that {@code KeyMapping.Category(Identifier("miningstats", "miningstats"))} derives
+ * on 26.x, so every branch groups the binds under "MiningStats" from one shared lang entry.
+ * Vanilla only sorts known categories, but both loaders cope: Fabric API registers unknown ones into
+ * the sort order, and NeoForge's KeyMapping.compareTo null-checks the lookup.
  */
 public class KeybindHandler {
 
-    private static final String CATEGORY = "key.categories.misc";
+    private static final String CATEGORY = "key.category.miningstats.miningstats";
 
     private static KeyMapping compactKey;
     private static KeyMapping resetKey;
@@ -40,6 +42,13 @@ public class KeybindHandler {
         KeyMappingRegistry.register(toggleSessionKey);
     }
 
+    /** The key currently bound to start/pause, for messages that tell the player what to press. */
+    public static Component getToggleSessionKeyName() {
+        return toggleSessionKey == null
+                ? Component.literal("?")
+                : toggleSessionKey.getTranslatedKeyMessage();
+    }
+
     public static void tick(Minecraft client) {
         if (client.player == null) return;
 
@@ -50,7 +59,7 @@ public class KeybindHandler {
         while (resetKey.consumeClick()) {
             SessionData session = SessionData.getInstance();
             sendSessionSummary(client);
-            session.reset();
+            session.resetKeepingRunState();
             session.deleteSavedSession();
             HudRenderer.triggerResetMessage();
 

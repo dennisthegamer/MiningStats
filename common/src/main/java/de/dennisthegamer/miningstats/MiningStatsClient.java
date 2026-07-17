@@ -78,13 +78,15 @@ public final class MiningStatsClient {
             SessionData session = SessionData.getInstance();
             if (session.getTotalOres() > 0) {
                 client.player.displayClientMessage(
-                        Component.translatable("miningstats.session.restored")
+                        Component.translatable("miningstats.session.restored",
+                                        KeybindHandler.getToggleSessionKeyName())
                                 .withStyle(style -> style.withColor(0x55FF55)),
                         false
                 );
             } else {
                 client.player.displayClientMessage(
-                        Component.translatable("miningstats.hint")
+                        Component.translatable("miningstats.hint",
+                                        KeybindHandler.getToggleSessionKeyName())
                                 .withStyle(style -> style.withColor(0xFFD700)),
                         false
                 );
