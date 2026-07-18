@@ -48,7 +48,7 @@ MiningStats is a lightweight, client-side Fabric mod that gives you live mining 
 
 ## ⚙️ Customization
 
-Configure the mod to your preferences via [Mod Menu](https://modrinth.com/mod/modmenu) + [Cloth Config](https://modrinth.com/mod/cloth-config), or by editing `.minecraft/config/miningstats.json`:
+Configure the mod to your preferences via [Mod Menu](https://modrinth.com/mod/modmenu) + [YACL](https://modrinth.com/mod/yacl), or by editing `.minecraft/config/miningstats.json`:
 
 - HUD position (all 4 screen corners)
 - HUD background opacity
@@ -66,7 +66,7 @@ Configure the mod to your preferences via [Mod Menu](https://modrinth.com/mod/mo
 - **Fabric Loader:** 0.18.3 or higher
 - **Fabric API:** Required
 - **Java:** 21 or higher
-- **Mod Menu + Cloth Config:** Optional (for in-game config screen)
+- **Mod Menu + YACL:** Optional (for in-game config screen)
 
 ---
 
