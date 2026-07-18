@@ -49,7 +49,7 @@ A client-side Fabric mod that tracks mined ores, calculates Fortune bonuses, and
 - Java 21+
 
 ### Optional
-- [Cloth Config](https://modrinth.com/mod/cloth-config) >= 15.0.0 (for in-game configuration screen)
+- [YACL](https://modrinth.com/mod/yacl) (for in-game configuration screen)
 - [Mod Menu](https://modrinth.com/mod/modmenu) (for accessing config via mod list)
 
 ### Steps
@@ -60,7 +60,7 @@ A client-side Fabric mod that tracks mined ores, calculates Fortune bonuses, and
 
 ## Configuration
 
-Configuration is stored in `.minecraft/config/miningstats.json` and can be edited in-game via Mod Menu + Cloth Config.
+Configuration is stored in `.minecraft/config/miningstats.json` and can be edited in-game via Mod Menu + YACL.
 
 | Setting | Default | Description |
 |---------|---------|-------------|
