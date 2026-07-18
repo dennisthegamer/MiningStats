@@ -11,6 +11,10 @@ base {
 
 repositories {
 	mavenLocal()
+	maven {
+		name = 'DennisTheGamer'
+		url = 'https://dennisthegamer.github.io/maven'
+	}
 	mavenCentral()
 	maven { name = 'NeoForged'; url = 'https://maven.neoforged.net/releases/' }
 	maven { name = 'Xander'; url = 'https://maven.isxander.dev/releases' }
