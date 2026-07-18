@@ -4,6 +4,7 @@ import de.dennisthegamer.miningstats.MiningStatsClient;
 import de.dennisthegamer.miningstats.config.ModConfigScreen;
 import de.dennisthegamer.miningstats.hud.HudRenderer;
 import de.dennisthegamer.miningstats.keybind.KeybindHandler;
+import de.dennisthegamer.hudlib.neoforge.HudLibNeoForge;
 import net.minecraft.client.Minecraft;
 import net.minecraft.resources.Identifier;
 import net.neoforged.api.distmarker.Dist;
@@ -15,7 +16,6 @@ import net.neoforged.neoforge.client.event.ClientTickEvent;
 import net.neoforged.neoforge.client.event.RegisterGuiLayersEvent;
 import net.neoforged.neoforge.client.event.RegisterKeyMappingsEvent;
 import net.neoforged.neoforge.client.gui.IConfigScreenFactory;
-import net.neoforged.neoforge.client.gui.VanillaGuiLayers;
 import net.neoforged.neoforge.common.NeoForge;
 
 @Mod(value = MiningStatsClient.MOD_ID, dist = Dist.CLIENT)
@@ -28,10 +28,10 @@ public final class MiningStatsNeoForge {
             event.register(KeybindHandler.resetKey);
             event.register(KeybindHandler.toggleSessionKey);
         });
-        modBus.addListener((RegisterGuiLayersEvent event) -> event.registerAbove(
-                VanillaGuiLayers.BOSS_OVERLAY,
+        modBus.addListener((RegisterGuiLayersEvent event) -> HudLibNeoForge.register(
+                event,
                 Identifier.fromNamespaceAndPath(MiningStatsClient.MOD_ID, "hud"),
-                (graphics, deltaTracker) -> HudRenderer.render(graphics, deltaTracker)
+                HudRenderer::render
         ));
         NeoForge.EVENT_BUS.addListener((ClientTickEvent.Post event) ->
                 MiningStatsClient.onTick(Minecraft.getInstance()));

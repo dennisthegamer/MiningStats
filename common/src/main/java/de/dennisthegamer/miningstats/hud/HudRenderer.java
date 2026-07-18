@@ -1,5 +1,7 @@
 package de.dennisthegamer.miningstats.hud;
 
+import de.dennisthegamer.hudlib.effect.HudEffects;
+import de.dennisthegamer.hudlib.ui.HudPanel;
 import de.dennisthegamer.miningstats.config.ModConfig;
 import de.dennisthegamer.miningstats.data.OreType;
 import de.dennisthegamer.miningstats.data.SessionData;
@@ -13,7 +15,19 @@ import net.minecraft.tags.ItemTags;
 
 import java.util.Map;
 
+/**
+ * Position/Skalierung/Hintergrund laufen über HudLibs HudPanel, die Effekt-Timer über
+ * HudEffects (ersetzt die gelöschten mod-eigenen HudLayout/HudEffects-Klassen).
+ * measureBox()/drawPreview() teilen sich die Vermessung mit dem Live-Pfad.
+ */
 public class HudRenderer {
+
+    private static final int PADDING = 6;
+    private static final int FULL_WIDTH = 220;
+    private static final int FLASH_DURATION = 10;          // 0.5 Sekunden
+    private static final int RESET_MESSAGE_DURATION = 40;  // 2 Sekunden
+
+    private static final HudEffects EFFECTS = new HudEffects(FLASH_DURATION);
 
     private static boolean compactMode = false;
 
@@ -25,6 +39,19 @@ public class HudRenderer {
         return compactMode;
     }
 
+    // Fassaden für die bisherigen HudEffects-Call-Sites (Tracker/Keybind/Client-Tick).
+    public static void triggerFlash() {
+        EFFECTS.triggerFlash();
+    }
+
+    public static void triggerResetMessage() {
+        EFFECTS.showMessage(RESET_MESSAGE_DURATION);
+    }
+
+    public static void tickEffects() {
+        EFFECTS.tick();
+    }
+
     public static void render(GuiGraphicsExtractor graphics, DeltaTracker deltaTracker) {
         Minecraft client = Minecraft.getInstance();
         if (client.player == null || client.gui.hud.isHidden()) return;
@@ -34,11 +61,23 @@ public class HudRenderer {
         // Check visibility: only show when holding pickaxe (unless always visible)
         if (!config.hudVisibleAlways && !isHoldingPickaxe(client)) return;
 
-        if (compactMode) {
-            renderCompact(graphics, client);
-        } else {
-            renderFull(graphics, client);
-        }
+        Font font = client.font;
+        int[] box = measure(font);
+        HudPanel.draw(graphics, config.getHudPlacement(), box[0], box[1], 1.0f, config.hudOpacity,
+                (g, x, y) -> drawContent(g, x, y, box[0], box[1], font));
+    }
+
+    /** Breite/Höhe der aktuellen Box (für den HudBoxProvider des Editors). */
+    public static int[] measureBox() {
+        return measure(Minecraft.getInstance().font);
+    }
+
+    /** Editor-Vorschau an expliziten Koordinaten (MiningStats skaliert nicht — scale wird geklemmt weitergereicht). */
+    public static void drawPreview(GuiGraphicsExtractor graphics, int x, int y, float scale) {
+        Font font = Minecraft.getInstance().font;
+        int[] box = measure(font);
+        HudPanel.drawAt(graphics, x, y, box[0], box[1], scale, ModConfig.getInstance().hudOpacity,
+                (g, bx, by) -> drawContent(g, bx, by, box[0], box[1], font));
     }
 
     private static boolean isHoldingPickaxe(Minecraft client) {
@@ -49,47 +88,62 @@ public class HudRenderer {
                 || offHand.is(holder -> holder.is(ItemTags.PICKAXES));
     }
 
-    private static void renderCompact(GuiGraphicsExtractor graphics, Minecraft client) {
-        Font font = client.font;
+    /** {breite, hoehe} des jeweils aktiven Modus — identische Formeln wie der alte Renderer. */
+    private static int[] measure(Font font) {
         SessionData session = SessionData.getInstance();
+        if (compactMode) {
+            int textWidth = font.width(compactText(session));
+            return new int[] { textWidth + PADDING * 2, font.lineHeight + PADDING * 2 };
+        }
         ModConfig config = ModConfig.getInstance();
+        int lineHeight = Math.max(font.lineHeight, 16) + 2;
+        Map<OreType, Integer> displayCounts = config.mergeDeepslate
+                ? session.getMergedOreCounts()
+                : session.getOreCounts();
+        int oreLines = 0;
+        for (int count : displayCounts.values()) {
+            if (count > 0) oreLines++;
+        }
+        int contentLines = 1 + oreLines;
+        return new int[] { FULL_WIDTH, PADDING * 2 + contentLines * lineHeight };
+    }
 
-        String text = I18n.get("miningstats.hud.compact", session.getTotalOres(), session.getTotalFortuneBonus())
+    private static String compactText(SessionData session) {
+        return I18n.get("miningstats.hud.compact", session.getTotalOres(), session.getTotalFortuneBonus())
                 + " " + (char) 0x00B7 + " " + session.getFormattedDuration()
                 + (session.isActive() ? "" : " " + (char) 0x23F8);
-        int textWidth = font.width(text);
-        int padding = HudLayout.getPadding();
-        int hudWidth = textWidth + padding * 2;
-        int hudHeight = font.lineHeight + padding * 2;
+    }
 
-        int x = HudLayout.getX(client.getWindow().getGuiScaledWidth(), hudWidth);
-        int y = HudLayout.getY(client.getWindow().getGuiScaledHeight(), hudHeight);
+    private static void drawContent(GuiGraphicsExtractor graphics, int x, int y,
+                                    int hudWidth, int hudHeight, Font font) {
+        if (compactMode) {
+            drawCompact(graphics, x, y, hudWidth, hudHeight, font);
+        } else {
+            drawFull(graphics, x, y, hudWidth, hudHeight, font);
+        }
+    }
 
-        // Background
-        int bgColor = ((int) (config.hudOpacity * 255) << 24);
-        graphics.fill(x, y, x + hudWidth, y + hudHeight, bgColor);
+    private static void drawCompact(GuiGraphicsExtractor graphics, int x, int y,
+                                    int hudWidth, int hudHeight, Font font) {
+        SessionData session = SessionData.getInstance();
 
-        // Flash effect
-        if (HudEffects.isFlashing()) {
-            int flashColor = (((int) (HudEffects.getFlashAlpha() * 100)) << 24) | 0xFFD700;
+        // Flash effect — wie bisher: Overlay IN der Box, Alpha x100.
+        if (EFFECTS.isFlashing()) {
+            int flashColor = (((int) (EFFECTS.flashAlpha() * 100)) << 24) | 0xFFD700;
             graphics.fill(x, y, x + hudWidth, y + hudHeight, flashColor);
         }
 
-        // Text
-        graphics.text(font, text, x + padding, y + padding, 0xFFFFFFFF, true);
+        graphics.text(font, compactText(session), x + PADDING, y + PADDING, 0xFFFFFFFF, true);
     }
 
-    private static void renderFull(GuiGraphicsExtractor graphics, Minecraft client) {
-        Font font = client.font;
+    private static void drawFull(GuiGraphicsExtractor graphics, int x, int y,
+                                 int hudWidth, int hudHeight, Font font) {
         SessionData session = SessionData.getInstance();
         ModConfig config = ModConfig.getInstance();
-
-        int padding = HudLayout.getPadding();
-        int lineHeight = Math.max(font.lineHeight, 16) + 2; // 16 for item icon height
+        int lineHeight = Math.max(font.lineHeight, 16) + 2;
         int iconSize = 16;
         int textOffsetX = iconSize + 4;
 
-        // Get display counts (merged or separate based on config)
         boolean merge = config.mergeDeepslate;
         Map<OreType, Integer> displayCounts = merge
                 ? session.getMergedOreCounts()
@@ -98,35 +152,18 @@ public class HudRenderer {
                 ? session.getMergedFortuneBonuses()
                 : null;
 
-        // Calculate HUD dimensions
-        int oreLines = 0;
-        for (int count : displayCounts.values()) {
-            if (count > 0) oreLines++;
-        }
-
-        // Title + ore lines (no more fortune total row)
-        int contentLines = 1 + oreLines;
-        int hudWidth = 220;
-        int hudHeight = padding * 2 + contentLines * lineHeight;
-
-        int x = HudLayout.getX(client.getWindow().getGuiScaledWidth(), hudWidth);
-        int y = HudLayout.getY(client.getWindow().getGuiScaledHeight(), hudHeight);
-
-        // Background
-        int bgColor = ((int) (config.hudOpacity * 255) << 24);
-        graphics.fill(x, y, x + hudWidth, y + hudHeight, bgColor);
-
-        // Flash effect
-        if (HudEffects.isFlashing()) {
-            int flashAlpha = (int) (HudEffects.getFlashAlpha() * 100);
+        // Flash effect — wie bisher: 2px-Rahmen um die Box plus bg-Refill, Alpha x100.
+        if (EFFECTS.isFlashing()) {
+            int flashAlpha = (int) (EFFECTS.flashAlpha() * 100);
             graphics.fill(x - 2, y - 2, x + hudWidth + 2, y + hudHeight + 2, (flashAlpha << 24) | 0xFFD700);
+            int bgColor = ((int) (config.hudOpacity * 255) << 24);
             graphics.fill(x, y, x + hudWidth, y + hudHeight, bgColor);
         }
 
-        int currentY = y + padding;
+        int currentY = y + PADDING;
 
         // Reset message overlay
-        if (HudEffects.isShowingResetMessage()) {
+        if (EFFECTS.isMessageVisible()) {
             String resetText = I18n.get("miningstats.hud.reset");
             int resetX = x + (hudWidth - font.width(resetText)) / 2;
             int resetY = y + (hudHeight - font.lineHeight) / 2;
@@ -145,22 +182,19 @@ public class HudRenderer {
         currentY += lineHeight;
 
         // Ore lines with icons and right-aligned counts
-        int rightEdge = x + hudWidth - padding;
+        int rightEdge = x + hudWidth - PADDING;
 
         for (Map.Entry<OreType, Integer> entry : displayCounts.entrySet()) {
             OreType type = entry.getKey();
             int count = entry.getValue();
             if (count <= 0) continue;
 
-            // Draw item icon
             if (type.getDropItem() != null) {
-                graphics.item(new ItemStack(type.getDropItem()), x + padding, currentY - 4);
+                graphics.item(new ItemStack(type.getDropItem()), x + PADDING, currentY - 4);
             }
 
-            // Draw ore name (left-aligned after icon)
-            graphics.text(font, type.getDisplayName(), x + padding + textOffsetX, currentY, 0xFFFFFFFF, true);
+            graphics.text(font, type.getDisplayName(), x + PADDING + textOffsetX, currentY, 0xFFFFFFFF, true);
 
-            // Draw fortune bonus (right-aligned at edge) if > 0
             int fortuneBonus = displayBonuses != null
                     ? displayBonuses.getOrDefault(type, 0)
                     : session.getFortuneBonus(type);
@@ -170,7 +204,6 @@ public class HudRenderer {
                 graphics.text(font, bonusText, rightEdge - bonusWidth, currentY, 0xFFFFD700, true);
             }
 
-            // Draw count (right-aligned before bonus column)
             String countText = String.valueOf(count);
             int countWidth = font.width(countText);
             int countX = rightEdge - 50 - countWidth; // 50px reserved for bonus column

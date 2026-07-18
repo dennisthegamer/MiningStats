@@ -36,3 +36,17 @@ type = "optional"
 versionRange = "[3.9,)"
 ordering = "NONE"
 side = "CLIENT"
+
+[[dependencies.miningstats]]
+modId = "hudlib"
+type = "required"
+versionRange = "[1.1,)"
+ordering = "AFTER"
+side = "CLIENT"
+
+[[dependencies.miningstats]]
+modId = "hudlibcore"
+type = "required"
+versionRange = "[1.1,)"
+ordering = "AFTER"
+side = "CLIENT"

@@ -9,8 +9,8 @@
   "config.miningstats.category.session": "Sitzungseinstellungen",
   "config.miningstats.category.tracking": "Tracking Einstellungen",
 
-  "config.miningstats.hud_position": "HUD Position",
-  "config.miningstats.hud_position.tooltip": "Position des HUD-Overlays auf dem Bildschirm",
+  "config.miningstats.hud_edit": "HUD-Position bearbeiten...",
+  "config.miningstats.hud_edit.tooltip": "Öffnet den Editor: HUD frei auf dem Bildschirm verschieben oder Positions-Presets wählen und speichern.",
   "config.miningstats.hud_visible_always": "Immer sichtbar",
   "config.miningstats.hud_visible_always.tooltip": "HUD auch ohne Spitzhacke anzeigen",
   "config.miningstats.hud_opacity": "HUD Transparenz",

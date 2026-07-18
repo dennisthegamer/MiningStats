@@ -3,7 +3,6 @@ package de.dennisthegamer.miningstats.keybind;
 import de.dennisthegamer.miningstats.data.OreType;
 import de.dennisthegamer.miningstats.data.SessionData;
 import de.dennisthegamer.miningstats.config.ModConfig;
-import de.dennisthegamer.miningstats.hud.HudEffects;
 import de.dennisthegamer.miningstats.hud.HudRenderer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.KeyMapping;
@@ -39,7 +38,7 @@ public class KeybindHandler {
             sendSessionSummary(client);
             session.reset();
             session.deleteSavedSession();
-            HudEffects.triggerResetMessage();
+            HudRenderer.triggerResetMessage();
 
             client.player.playSound(SoundEvents.EXPERIENCE_ORB_PICKUP, 1.0f, 1.0f);
         }

@@ -1,8 +1,12 @@
 package de.dennisthegamer.miningstats.config;
 
 import de.dennisthegamer.miningstats.data.OreType;
+import de.dennisthegamer.miningstats.hud.MiningStatsHudBox;
+import de.dennisthegamer.miningstats.hud.MiningStatsSlotStore;
+import de.dennisthegamer.hudlib.ui.HudEditorScreen;
 import dev.isxander.yacl3.api.*;
 import dev.isxander.yacl3.api.controller.*;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 
@@ -16,12 +20,16 @@ public class ModConfigScreen {
 
         var hudCategory = ConfigCategory.createBuilder()
                 .name(Component.translatable("config.miningstats.category.hud"))
-                .option(Option.<ModConfig.HudPosition>createBuilder()
-                        .name(Component.translatable("config.miningstats.hud_position"))
-                        .description(val -> OptionDescription.of(
-                                Component.translatable("config.miningstats.hud_position.tooltip")))
-                        .binding(defaults.getHudPosition(), config::getHudPosition, v -> config.hudPosition = v.name())
-                        .controller(opt -> EnumControllerBuilder.create(opt).enumClass(ModConfig.HudPosition.class))
+                .option(ButtonOption.createBuilder()
+                        .name(Component.translatable("config.miningstats.hud_edit"))
+                        .description(OptionDescription.of(
+                                Component.translatable("config.miningstats.hud_edit.tooltip")))
+                        .action((yaclScreen, opt) -> {
+                            ModConfig cfg = ModConfig.getInstance();
+                            Minecraft.getInstance().gui.setScreen(new HudEditorScreen(
+                                    yaclScreen, new MiningStatsHudBox(), new MiningStatsSlotStore(),
+                                    cfg::getHudPlacement, p -> { cfg.hudPlacement = p; cfg.save(); }));
+                        })
                         .build())
                 .option(Option.<Boolean>createBuilder()
                         .name(Component.translatable("config.miningstats.hud_visible_always"))
