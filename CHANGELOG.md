@@ -2,6 +2,20 @@
 
 All notable changes to MiningStats will be documented in this file.
 
+## [1.4.0] - 2026-07-18
+
+### Added
+- **Freely positionable HUD**: the config screen has a new "Edit HUD Position..." button that
+  opens an editor - drag the HUD anywhere on screen and confirm
+- **Position presets**: save, apply, rename and delete HUD positions
+- HudLib is bundled inside the jar (jar-in-jar); there is nothing extra to install
+
+### Changed
+- The HUD is no longer limited to the four screen corners. An existing `hudPosition`
+  setting is migrated automatically to the same spot
+- HUD drawing, the ore flash and the "Reset" overlay now come from the shared HudLib;
+  the mod-local `HudLayout`/`HudEffects` helpers were removed (behaviour unchanged)
+
 ## [1.3.0] - 2026-07-14
 
 ### Added
