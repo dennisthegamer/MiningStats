@@ -10,6 +10,7 @@ base {
 }
 
 repositories {
+	mavenLocal()
 	mavenCentral()
 	maven { name = 'NeoForged'; url = 'https://maven.neoforged.net/releases/' }
 	maven { name = 'Xander'; url = 'https://maven.isxander.dev/releases' }
@@ -38,6 +39,12 @@ neoForge {
 
 dependencies {
 	implementation "dev.isxander:yet-another-config-lib:${project.yacl_version}-neoforge"
+
+	// HudLib (mavenLocal, jar-in-jar via NeoForge JarJar)
+	implementation "de.dennisthegamer:hudlib-core:1.1.1"
+	jarJar "de.dennisthegamer:hudlib-core:1.1.1"
+	implementation "de.dennisthegamer:hudlib-ui-neoforge:1.1.1+mc26.1"
+	jarJar "de.dennisthegamer:hudlib-ui-neoforge:1.1.1+mc26.1"
 }
 
 processResources {

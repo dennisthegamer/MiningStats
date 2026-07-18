@@ -3,7 +3,7 @@ package de.dennisthegamer.miningstats;
 import de.dennisthegamer.miningstats.config.ModConfig;
 import de.dennisthegamer.miningstats.data.OreRegistry;
 import de.dennisthegamer.miningstats.data.SessionData;
-import de.dennisthegamer.miningstats.hud.HudEffects;
+import de.dennisthegamer.miningstats.hud.HudRenderer;
 import de.dennisthegamer.miningstats.keybind.KeybindHandler;
 import de.dennisthegamer.miningstats.tracker.FortuneTracker;
 import de.dennisthegamer.miningstats.tracker.OreTracker;
@@ -38,7 +38,7 @@ public final class MiningStatsClient {
     public static void onTick(Minecraft client) {
         KeybindHandler.tick(client);
         FortuneTracker.tick();
-        HudEffects.tick();
+        HudRenderer.tickEffects();
 
         boolean inWorld = client.level != null && client.player != null;
 

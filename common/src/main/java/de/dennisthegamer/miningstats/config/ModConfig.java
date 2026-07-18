@@ -2,6 +2,9 @@ package de.dennisthegamer.miningstats.config;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import de.dennisthegamer.hudlib.position.HudPlacement;
+import de.dennisthegamer.hudlib.position.HudPositionMigration;
+import de.dennisthegamer.hudlib.position.HudPreset;
 import de.dennisthegamer.miningstats.data.OreType;
 import de.dennisthegamer.miningstats.platform.Platforms;
 
@@ -26,6 +29,10 @@ public class ModConfig {
 
     // HUD Settings
     public String hudPosition = "BOTTOM_LEFT";
+    /** Freie HUD-Position (Anker + Offset). Nach {@link #load()} immer non-null. */
+    public HudPlacement hudPlacement = null;
+    /** Vom Nutzer gespeicherte Positions-Slots. */
+    public List<HudPreset> hudSlots = new ArrayList<>();
     public boolean hudVisibleAlways = false;
     public float hudOpacity = 0.6f;
 
@@ -59,6 +66,7 @@ public class ModConfig {
             try (FileReader reader = new FileReader(CONFIG_FILE)) {
                 ModConfig config = GSON.fromJson(reader, ModConfig.class);
                 if (config != null) {
+                    config.migrateHudPosition();
                     return config;
                 }
             } catch (IOException e) {
@@ -66,6 +74,7 @@ public class ModConfig {
             }
         }
         ModConfig config = new ModConfig();
+        config.migrateHudPosition();
         config.save();
         return config;
     }
@@ -86,15 +95,26 @@ public class ModConfig {
         return milestones.getOrDefault(key, 0);
     }
 
-    public HudPosition getHudPosition() {
-        try {
-            return HudPosition.valueOf(hudPosition);
-        } catch (IllegalArgumentException e) {
-            return HudPosition.BOTTOM_LEFT;
+    /**
+     * Einmalige Migration: befüllt {@link #hudPlacement} aus dem Legacy-{@link #hudPosition}
+     * (4-Ecken-Enum als String; Feld-Default BOTTOM_LEFT bleibt so optisch erhalten) und stoppt
+     * das Persistieren des Legacy-Feldes (Gson lässt null-Felder weg).
+     */
+    public void migrateHudPosition() {
+        if (hudPlacement == null) {
+            hudPlacement = HudPositionMigration.fromLegacy(hudPosition);
+        }
+        hudPosition = null;
+        if (hudSlots == null) {
+            hudSlots = new ArrayList<>();
         }
     }
 
-    public enum HudPosition {
-        TOP_LEFT, TOP_RIGHT, BOTTOM_LEFT, BOTTOM_RIGHT
+    /** Non-null-Zugriff für Renderer/Editor (defensiv, falls die JSON von Hand geleert wurde). */
+    public HudPlacement getHudPlacement() {
+        if (hudPlacement == null) {
+            migrateHudPosition();
+        }
+        return hudPlacement;
     }
 }

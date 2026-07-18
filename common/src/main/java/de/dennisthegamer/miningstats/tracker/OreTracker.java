@@ -4,7 +4,7 @@ import de.dennisthegamer.miningstats.MiningStatsClient;
 import de.dennisthegamer.miningstats.data.OreRegistry;
 import de.dennisthegamer.miningstats.data.OreType;
 import de.dennisthegamer.miningstats.data.SessionData;
-import de.dennisthegamer.miningstats.hud.HudEffects;
+import de.dennisthegamer.miningstats.hud.HudRenderer;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
@@ -72,7 +72,7 @@ public class OreTracker {
         // Trigger flash effect for rare ores (including deepslate variants)
         OreType baseType = type.getBaseType();
         if (baseType == OreType.DIAMOND || baseType == OreType.ANCIENT_DEBRIS) {
-            HudEffects.triggerFlash();
+            HudRenderer.triggerFlash();
         }
 
         // Check milestones (use merged count so deepslate contributes)
