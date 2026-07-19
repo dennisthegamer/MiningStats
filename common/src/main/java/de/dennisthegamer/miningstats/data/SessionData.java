@@ -21,10 +21,7 @@ public class SessionData {
 
     private final Map<OreType, Integer> oreCounts = new EnumMap<>(OreType.class);
     private final Map<OreType, Integer> fortuneBonus = new EnumMap<>(OreType.class);
-    private long sessionStartTime;
-    private boolean active = false;
-    private long pausedDurationMillis = 0;
-    private long pauseStartTime = 0;
+    private final SessionClock clock = new SessionClock();
 
     private SessionData() {
         reset();
@@ -34,38 +31,30 @@ public class SessionData {
         return INSTANCE;
     }
 
+    /** Clears counters and clock and leaves the session paused, so the HUD pause glyph matches a frozen clock. */
     public void reset() {
         oreCounts.clear();
         fortuneBonus.clear();
-        sessionStartTime = System.currentTimeMillis();
-        active = false;
-        pausedDurationMillis = 0;
-        pauseStartTime = 0;
+        clock.reset();
+    }
+
+    /** Reset keybind: a running session restarts from zero, a paused one stays paused at zero. */
+    public void resetKeepingRunState() {
+        oreCounts.clear();
+        fortuneBonus.clear();
+        clock.resetKeepingRunState();
     }
 
     public void start() {
-        if (!active) {
-            if (sessionStartTime == 0 || getTotalOres() == 0) {
-                sessionStartTime = System.currentTimeMillis();
-                pausedDurationMillis = 0;
-            }
-            if (pauseStartTime > 0) {
-                pausedDurationMillis += System.currentTimeMillis() - pauseStartTime;
-                pauseStartTime = 0;
-            }
-            active = true;
-        }
+        clock.start();
     }
 
     public void pause() {
-        if (active) {
-            active = false;
-            pauseStartTime = System.currentTimeMillis();
-        }
+        clock.pause();
     }
 
     public boolean isActive() {
-        return active;
+        return clock.isActive();
     }
 
     public void incrementOreCount(OreType type) {
@@ -99,12 +88,7 @@ public class SessionData {
     }
 
     public long getSessionDurationMillis() {
-        long elapsed = System.currentTimeMillis() - sessionStartTime;
-        long paused = pausedDurationMillis;
-        if (!active && pauseStartTime > 0) {
-            paused += System.currentTimeMillis() - pauseStartTime;
-        }
-        return elapsed - paused;
+        return clock.elapsedMillis();
     }
 
     /**
@@ -219,17 +203,16 @@ public class SessionData {
                 }
             }
 
+            // Bail out before touching the clock, so a file we cannot use leaves it at zero
+            // rather than stranding a stale duration on a session reported as "not restored".
+            if (getTotalOres() == 0) return false;
+
             if (data.containsKey("durationMillis")) {
-                long savedDuration = ((Double) data.get("durationMillis")).longValue();
-                sessionStartTime = System.currentTimeMillis() - savedDuration;
-                pausedDurationMillis = 0;
+                // Stays paused; resumes when the player presses the toggle key.
+                clock.restore(((Double) data.get("durationMillis")).longValue());
             }
 
-            // Restored session starts paused
-            active = false;
-            pauseStartTime = System.currentTimeMillis();
-
-            return getTotalOres() > 0;
+            return true;
         } catch (Exception e) {
             System.err.println("Failed to load MiningStats session: " + e.getMessage());
             return false;
