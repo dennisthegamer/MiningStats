@@ -2,6 +2,14 @@
 
 All notable changes to MiningStats will be documented in this file.
 
+## [1.3.2] - 2026-07-19
+
+### Changed
+- Version aligned across the Minecraft 1.21.x line. The movable HUD reached the
+  1.21–1.21.5 jar in 1.3.2; this branch already had it, so **nothing changes
+  functionally here** — the number is bumped only so one version identifies the
+  whole 1.21.x release.
+
 ## [1.3.1] - 2026-07-19
 
 ### Changed
