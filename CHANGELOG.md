@@ -2,6 +2,14 @@
 
 All notable changes to MiningStats will be documented in this file.
 
+## [1.3.1] - 2026-07-19
+
+### Changed
+- Version aligned across all Minecraft 1.21.x branches. The session-clock fix
+  released as 1.3.1 was already present on this branch, so **nothing changes
+  functionally here** — the number is bumped only so one version identifies the
+  whole 1.21.x release.
+
 ## [1.3.0] - 2026-07-14
 
 ### Added
