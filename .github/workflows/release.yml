@@ -19,8 +19,11 @@ jobs:
     strategy:
       matrix:
         include:
+          - branch: mc26.2
+            java-version: '25'
+            mc-label: 'mc26.2'
           - branch: mc26.1
-            java-version: '25-ea'
+            java-version: '25'
             mc-label: 'mc26.1'
           - branch: mc1.21.9-1.21.11
             java-version: '21'
@@ -28,6 +31,9 @@ jobs:
           - branch: mc1.21-1.21.8
             java-version: '21'
             mc-label: 'mc1.21-1.21.8'
+          - branch: mc1.21.5
+            java-version: '21'
+            mc-label: 'mc1.21.5'
     runs-on: ubuntu-24.04
     steps:
       - name: Checkout repository
@@ -135,11 +141,17 @@ jobs:
 
           ## Downloads
 
-          | Minecraft Version | File |
-          |---|---|
-          | 26.1 | \`miningstats-mc26.1-${VERSION}.jar\` |
-          | 1.21.9 - 1.21.11 | \`miningstats-mc1.21.11-${VERSION}.jar\` |
-          | 1.21 - 1.21.8 | \`miningstats-mc1.21.8-${VERSION}.jar\` |
+          Files are named \`miningstats-<loader>-<version>+mc<range>.jar\`. Pick the row
+          matching your Minecraft version. Note that the 1.21.x and 26.x lines carry
+          different version numbers, so match on the \`+mc\` part.
+
+          | Minecraft | Fabric | NeoForge |
+          |---|---|---|
+          | 26.2 | \`+mc26.2\` | \`+mc26.2\` |
+          | 26.1 - 26.1.2 | \`+mc26.1-26.1.2\` | \`+mc26.1.2\` (NeoForge needs 26.1.2) |
+          | 1.21.9 - 1.21.11 | \`+mc1.21.9-1.21.11\` | \`+mc1.21.9-1.21.11\` |
+          | 1.21.6 - 1.21.8 | \`+mc1.21.6-1.21.8\` | \`+mc1.21.6-1.21.8\` |
+          | 1.21 - 1.21.5 | \`+mc1.21-1.21.5\` | \`+mc1.21-1.21.5\` |
 
           ## Requirements
 
