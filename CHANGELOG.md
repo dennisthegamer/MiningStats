@@ -2,6 +2,21 @@
 
 All notable changes to MiningStats will be documented in this file.
 
+## [1.3.1] - 2026-07-19
+
+### Fixed
+- **The session clock no longer runs while the session is paused, and the
+  duration can no longer go negative.** "Paused" was tracked twice: one flag
+  drove the HUD pause glyph while the clock did its own arithmetic, and after
+  joining a world the clock counted up although the glyph showed a pause.
+  Resuming a session in which nothing had been mined yet could even produce a
+  negative duration. The timer is now a plain stopwatch, so the pause state is
+  the single source of truth and negative values are structurally impossible.
+- The reset key no longer stops a running session — it restarts the counters
+  from zero and keeps running; a paused session stays paused.
+- A saved session that cannot be restored (e.g. its ore names no longer resolve)
+  no longer leaves its duration behind on the fresh session.
+
 ## [1.3.0] - 2026-07-14
 
 ### Added

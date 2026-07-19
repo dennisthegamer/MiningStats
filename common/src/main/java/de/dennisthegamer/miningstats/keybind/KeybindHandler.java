@@ -51,7 +51,7 @@ public class KeybindHandler {
         while (resetKey.consumeClick()) {
             SessionData session = SessionData.getInstance();
             sendSessionSummary(client);
-            session.reset();
+            session.resetKeepingRunState();
             session.deleteSavedSession();
             HudEffects.triggerResetMessage();
 
