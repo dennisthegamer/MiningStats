@@ -2,6 +2,17 @@
 
 All notable changes to MiningStats will be documented in this file.
 
+## [1.3.2] - 2026-07-19
+
+### Added
+- **Freely positionable HUD** on Minecraft 1.21–1.21.5 as well: the config screen
+  gets the "Edit HUD Position..." button, plus saveable position presets. This was
+  the last jar still limited to the four screen corners — every other version
+  already had it. HudLib is bundled inside the jar, nothing extra to install.
+
+### Changed
+- An existing `hudPosition` setting is migrated automatically to the same spot
+
 ## [1.3.1] - 2026-07-19
 
 ### Fixed
