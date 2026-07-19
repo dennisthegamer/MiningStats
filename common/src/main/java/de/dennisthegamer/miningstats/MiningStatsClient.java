@@ -3,7 +3,6 @@ package de.dennisthegamer.miningstats;
 import de.dennisthegamer.miningstats.config.ModConfig;
 import de.dennisthegamer.miningstats.data.OreRegistry;
 import de.dennisthegamer.miningstats.data.SessionData;
-import de.dennisthegamer.miningstats.hud.HudEffects;
 import de.dennisthegamer.miningstats.hud.HudRenderer;
 import de.dennisthegamer.miningstats.keybind.KeybindHandler;
 import de.dennisthegamer.miningstats.tracker.FortuneTracker;
@@ -59,7 +58,7 @@ public final class MiningStatsClient {
         FortuneTracker.tick();
 
         // HUD effects tick (flash, reset message)
-        HudEffects.tick();
+        HudRenderer.tick();
 
         // Session lifecycle: detect world join/leave
         boolean inWorld = client.level != null && client.player != null;
@@ -79,13 +78,15 @@ public final class MiningStatsClient {
             SessionData session = SessionData.getInstance();
             if (session.getTotalOres() > 0) {
                 client.player.displayClientMessage(
-                        Component.translatable("miningstats.session.restored")
+                        Component.translatable("miningstats.session.restored",
+                                        KeybindHandler.getToggleSessionKeyName())
                                 .withStyle(style -> style.withColor(0x55FF55)),
                         false
                 );
             } else {
                 client.player.displayClientMessage(
-                        Component.translatable("miningstats.hint")
+                        Component.translatable("miningstats.hint",
+                                        KeybindHandler.getToggleSessionKeyName())
                                 .withStyle(style -> style.withColor(0xFFD700)),
                         false
                 );
