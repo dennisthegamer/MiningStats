@@ -2,6 +2,17 @@
 
 All notable changes to MiningStats will be documented in this file.
 
+## [1.3.3] - 2026-07-20
+
+### Fixed
+- **Crash when mining on Minecraft 1.21 and 1.21.1.** Breaking the first tracked
+  ore threw `NoSuchMethodError` and took the game down. This jar covers
+  1.21 - 1.21.5, but the enchantment lookup used a call shape that only exists
+  from 1.21.2 on: `Registry` did not implement `HolderLookup.RegistryLookup`
+  before that version. The lookup now goes through `HolderLookup.Provider`,
+  which is identical on every version this jar targets. Silk Touch and Fortune
+  detection are unchanged everywhere else.
+
 ## [1.3.2] - 2026-07-19
 
 ### Added

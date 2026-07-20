@@ -13,6 +13,7 @@ import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.core.Holder;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
@@ -26,10 +27,26 @@ public class OreTracker {
 
     private static void ensureEnchantmentCache() {
         if (cachedSilkTouch == null || cachedFortune == null) {
-            var registry = Minecraft.getInstance().level.registryAccess()
-                    .lookupOrThrow(Registries.ENCHANTMENT);
-            cachedSilkTouch = registry.getOrThrow(Enchantments.SILK_TOUCH);
-            cachedFortune = registry.getOrThrow(Enchantments.FORTUNE);
+            // Go through HolderLookup.Provider/RegistryLookup, NOT through Registry.
+            //
+            // This jar covers 1.21 - 1.21.5, and Registry's type hierarchy changed in
+            // 1.21.2: before that it did not implement HolderLookup.RegistryLookup, so
+            // neither RegistryAccess.lookupOrThrow(..)->Registry nor
+            // Registry.getOrThrow(ResourceKey)->Holder resolves on 1.21/1.21.1 and the
+            // first mined ore died with NoSuchMethodError.
+            //
+            // HolderLookup.Provider.lookupOrThrow(..)->RegistryLookup and
+            // HolderGetter.getOrThrow(ResourceKey)->Holder.Reference are byte-identical
+            // across 1.21, 1.21.1, 1.21.2 and 1.21.5 (checked with javap against all
+            // four jars, and the intermediary ids are stable too, so both loaders are
+            // covered). The explicit Provider type is what forces the call onto the
+            // stable interface -- with `var` javac picks RegistryAccess's covariant
+            // override and we are back to the broken descriptor.
+            HolderLookup.Provider provider = Minecraft.getInstance().level.registryAccess();
+            HolderLookup.RegistryLookup<Enchantment> enchantments =
+                    provider.lookupOrThrow(Registries.ENCHANTMENT);
+            cachedSilkTouch = enchantments.getOrThrow(Enchantments.SILK_TOUCH);
+            cachedFortune = enchantments.getOrThrow(Enchantments.FORTUNE);
         }
     }
 
