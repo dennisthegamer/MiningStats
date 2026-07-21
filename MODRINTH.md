@@ -50,7 +50,7 @@ MiningStats is a lightweight, client-side Fabric and NeoForge mod that gives you
 
 Configure the mod to your preferences via [Mod Menu](https://modrinth.com/mod/modmenu) + [YACL](https://modrinth.com/mod/yacl), or by editing `.minecraft/config/miningstats.json`:
 
-- HUD position (all 4 screen corners)
+- HUD position anywhere on screen — drag editor with saveable presets
 - HUD background opacity
 - Always visible or only with pickaxe
 - Merge deepslate variants on/off
