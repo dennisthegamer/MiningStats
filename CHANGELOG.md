@@ -2,6 +2,31 @@
 
 All notable changes to MiningStats will be documented in this file.
 
+## [1.5.0] - 2026-07-21
+
+### Fixed
+- **The session timer no longer keeps running while the ESC menu is open.** The
+  clock measured real time and only ever learned about the pause keybind, so in
+  single-player it kept counting although the game itself was frozen. Opening
+  the pause menu now pauses the session and closing it resumes — but only if the
+  ESC menu was what paused it. A session you paused yourself stays paused, and
+  submenus opened from the pause menu keep the pause too.
+- **Ores are only counted once the break was actually allowed.** The counter ran
+  before the game had decided whether the block could be broken at all, so a
+  block you merely clicked was already booked as mined — in adventure mode,
+  inside spawn protection, without a tool permitted to break it, or on a game
+  master block. Those no longer count.
+  Note the limit of a client-side mod: if a *server* plugin (WorldGuard and the
+  like) refuses the break, the client cannot see that, and it is still counted.
+
+### Changed
+- Version unified across all Minecraft version branches, so every build of this
+  release carries the same number.
+- Internal: the NeoForge metadata now declares the bundled `hudlibcore` next to
+  `hudlib`. Both have always shipped inside the jar (jar-in-jar), only the
+  declaration was incomplete — there is nothing extra to install and nothing
+  changes in game.
+
 ## [1.3.3] - 2026-07-20
 
 ### Fixed
