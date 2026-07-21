@@ -1,11 +1,11 @@
 # MiningStats
 
-A client-side Fabric mod that tracks mined ores, calculates Fortune bonuses, and displays live stats in a configurable HUD overlay.
+A client-side Fabric and NeoForge mod that tracks mined ores, calculates Fortune bonuses, and displays live stats in a configurable HUD overlay.
 
-![Minecraft](https://img.shields.io/badge/Minecraft-1.21–26.2-green)
-![Mod Loader](https://img.shields.io/badge/Mod%20Loader-Fabric-blue)
+![Minecraft](https://img.shields.io/badge/Minecraft-1.21.6%E2%80%931.21.8-green)
+![Mod Loader](https://img.shields.io/badge/Mod%20Loader-Fabric%20%7C%20NeoForge-blue)
 ![License](https://img.shields.io/badge/License-MIT-yellow)
-![Version](https://img.shields.io/badge/Version-1.2.0-orange)
+![Version](https://img.shields.io/badge/Version-1.5.0-orange)
 
 ## Features
 
@@ -43,9 +43,9 @@ A client-side Fabric mod that tracks mined ores, calculates Fortune bonuses, and
 ## Installation
 
 ### Requirements
-- Minecraft 1.21 - 26.2
-- [Fabric Loader](https://fabricmc.net/) >= 0.18.3
-- [Fabric API](https://modrinth.com/mod/fabric-api)
+- Minecraft 1.21.6 – 1.21.8
+- [Fabric Loader](https://fabricmc.net/) >= 0.18.3, or [NeoForge](https://neoforged.net/)
+- [Fabric API](https://modrinth.com/mod/fabric-api) (Fabric only)
 - Java 21+
 
 ### Optional
@@ -53,8 +53,8 @@ A client-side Fabric mod that tracks mined ores, calculates Fortune bonuses, and
 - [Mod Menu](https://modrinth.com/mod/modmenu) (for accessing config via mod list)
 
 ### Steps
-1. Install Fabric Loader and Fabric API
-2. Download the latest `miningstats-fabric-1.2.0+mc1.21.6-1.21.8.jar` from [Releases](../../releases)
+1. Install either Fabric (plus Fabric API) or NeoForge
+2. Download the latest `miningstats-fabric-1.5.0+mc1.21.6-1.21.8.jar` (or `miningstats-neoforge-1.5.0+mc1.21.6-1.21.8.jar`) from [Releases](../../releases)
 3. Place the JAR in your `.minecraft/mods/` folder
 4. Launch Minecraft
 

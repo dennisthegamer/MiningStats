@@ -2,7 +2,7 @@
 
 **Track every ore you mine. See your Fortune bonus. All in a clean HUD.**
 
-MiningStats is a lightweight, client-side Fabric mod that gives you live mining statistics directly on your screen. Whether you're strip mining for diamonds or hunting ancient debris in the Nether — MiningStats keeps count so you don't have to.
+MiningStats is a lightweight, client-side Fabric and NeoForge mod that gives you live mining statistics directly on your screen. Whether you're strip mining for diamonds or hunting ancient debris in the Nether — MiningStats keeps count so you don't have to.
 
 ---
 
@@ -62,8 +62,8 @@ Configure the mod to your preferences via [Mod Menu](https://modrinth.com/mod/mo
 
 ## 📋 Requirements
 
-- **Minecraft:** 1.21 – 26.2
-- **Fabric Loader:** 0.18.3 or higher
+- **Minecraft:** 1.21.6 – 1.21.8
+- **Fabric Loader:** 0.18.3 or higher — **or** NeoForge
 - **Fabric API:** Required
 - **Java:** 21 or higher
 - **Mod Menu + YACL:** Optional (for in-game config screen)
@@ -102,7 +102,7 @@ Yes! It's fully client-side and works on any server without server-side installa
 No. MiningStats is lightweight and only processes data when you break an ore block.
 
 **Are stats saved between sessions?**
-No. Stats are per-session only and reset when you leave a world. You can also manually reset with **K**.
+Not by default — a session resets when you leave the world. Turn on **Persist sessions** in the config and your session is restored when you rejoin. You can also manually reset with **K**.
 
 **Does it detect Fortune correctly?**
 Yes. MiningStats reads the Fortune level from your held pickaxe and calculates the bonus based on actual dropped items.
