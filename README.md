@@ -24,7 +24,8 @@ A client-side Fabric and NeoForge mod that tracks mined ores, calculates Fortune
 
 ### HUD Overlay
 - Non-intrusive on-screen statistics panel with ore icons
-- Configurable position: top-left, top-right, bottom-left, bottom-right
+- Freely placeable: **Edit HUD Position…** in the config screen opens an editor where
+  you drag the HUD anywhere on screen and save named position presets
 - Toggle between full and compact mode with **H**
 - Adjustable background opacity
 - Shows only when holding a pickaxe (or always, if configured)
@@ -64,7 +65,7 @@ Configuration is stored in `.minecraft/config/miningstats.json` and can be edite
 
 | Setting | Default | Description |
 |---------|---------|-------------|
-| HUD Position | Bottom-Left | Screen corner for the HUD overlay |
+| HUD Position | Bottom-Left | Starting point; use **Edit HUD Position…** to place it freely |
 | Always Visible | Off | Show HUD even without holding a pickaxe |
 | HUD Opacity | 0.6 | Background transparency (0.0 - 1.0) |
 | Session Summary | On | Show stats summary in chat when leaving a world |
