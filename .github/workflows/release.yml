@@ -111,7 +111,7 @@ jobs:
       - name: Collect all JARs
         run: |
           mkdir -p release-jars
-          find artifacts/ -name "*.jar" -exec cp {} release-jars/ \;
+          find artifacts/ -name "*.jar" ! -name "*-dev-shadow.jar" -exec cp {} release-jars/ \;
           echo "Release JARs:"
           ls -la release-jars/
 
