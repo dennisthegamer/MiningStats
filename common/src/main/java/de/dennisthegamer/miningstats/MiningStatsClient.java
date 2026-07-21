@@ -8,6 +8,7 @@ import de.dennisthegamer.miningstats.keybind.KeybindHandler;
 import de.dennisthegamer.miningstats.tracker.FortuneTracker;
 import de.dennisthegamer.miningstats.tracker.OreTracker;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.screens.PauseScreen;
 import net.minecraft.network.chat.Component;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,6 +24,7 @@ public final class MiningStatsClient {
 
     private static boolean wasInWorld = false;
     private static boolean hintShown = false;
+    private static boolean escPaused = false;
 
     private MiningStatsClient() {
     }
@@ -84,9 +86,27 @@ public final class MiningStatsClient {
             }
             session.reset();
             OreTracker.invalidateCache();
+            escPaused = false;
             LOGGER.info("Session ended");
         }
 
         wasInWorld = inWorld;
+
+        if (!inWorld) return;
+
+        // Pause the session clock while the ESC/pause menu is open, resume once it closes.
+        // The clock is a wall clock, so without this it keeps banking real time while the
+        // single-player game is frozen. A session paused manually via the keybind is left
+        // alone: escPaused is only set when the ESC menu paused a RUNNING session, so only
+        // that pause gets auto-resumed. Same behaviour as FishingStats.
+        SessionData session = SessionData.getInstance();
+        if (client.gui.screen() instanceof PauseScreen && !escPaused && session.isActive()) {
+            session.pause();
+            escPaused = true;
+        } else if (client.gui.screen() == null && escPaused) {
+            // Only once actually back in game -- submenus opened from the pause menu keep the pause
+            session.start();
+            escPaused = false;
+        }
     }
 }
