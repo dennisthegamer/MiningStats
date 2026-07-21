@@ -28,9 +28,9 @@ jobs:
           - branch: mc1.21.9-1.21.11
             java-version: '21'
             mc-label: 'mc1.21.9-1.21.11'
-          - branch: mc1.21-1.21.8
+          - branch: mc1.21.6-1.21.8
             java-version: '21'
-            mc-label: 'mc1.21-1.21.8'
+            mc-label: 'mc1.21.6-1.21.8'
           - branch: mc1.21.5
             java-version: '21'
             mc-label: 'mc1.21.5'
