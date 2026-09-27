@@ -19,6 +19,9 @@ jobs:
     strategy:
       matrix:
         include:
+          - branch: mc26.3
+            java-version: '25'
+            mc-label: 'mc26.3'
           - branch: mc26.2
             java-version: '25'
             mc-label: 'mc26.2'
@@ -147,6 +150,7 @@ jobs:
 
           | Minecraft | Fabric | NeoForge |
           |---|---|---|
+          | 26.3 | \`+mc26.3\` | \`+mc26.3\` |
           | 26.2 | \`+mc26.2\` | \`+mc26.2\` |
           | 26.1 - 26.1.2 | \`+mc26.1-26.1.2\` | \`+mc26.1.2\` (NeoForge needs 26.1.2) |
           | 1.21.9 - 1.21.11 | \`+mc1.21.9-1.21.11\` | \`+mc1.21.9-1.21.11\` |
