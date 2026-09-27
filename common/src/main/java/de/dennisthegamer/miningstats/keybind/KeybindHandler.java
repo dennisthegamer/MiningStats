@@ -10,7 +10,6 @@ import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
-import org.lwjgl.glfw.GLFW;
 
 public class KeybindHandler {
 
@@ -20,11 +19,11 @@ public class KeybindHandler {
             new KeyMapping.Category(Identifier.fromNamespaceAndPath("miningstats", "miningstats"));
 
     public static final KeyMapping compactKey = new KeyMapping(
-            "key.miningstats.compact", InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_H, CATEGORY);
+            "key.miningstats.compact", InputConstants.Type.KEYBOARD, InputConstants.KEY_H, CATEGORY);
     public static final KeyMapping resetKey = new KeyMapping(
-            "key.miningstats.reset", InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_K, CATEGORY);
+            "key.miningstats.reset", InputConstants.Type.KEYBOARD, InputConstants.KEY_K, CATEGORY);
     public static final KeyMapping toggleSessionKey = new KeyMapping(
-            "key.miningstats.toggle_session", InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_J, CATEGORY);
+            "key.miningstats.toggle_session", InputConstants.Type.KEYBOARD, InputConstants.KEY_J, CATEGORY);
 
     public static void tick(Minecraft client) {
         if (client.player == null) return;
